@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>login</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+    <ion-item>
+      <ion-input #pswTxt required type="password" placeholder="Password"
+        (keyup.enter)="login(pswTxt.value)"></ion-input>
+    </ion-item>
+  </ion-list>
+  <ion-button (click)="login(pswTxt.value)">Login</ion-button>
+</ion-content>
