@@ -7,6 +7,7 @@ const routes: Routes = [
   { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
   { path: 'create', loadChildren: './create/create.module#CreatePageModule' },
   { path: 'siteForm', loadChildren: './site-form/site-form.module#SiteFormPageModule' },
+  { path: 'passwordGenerator', loadChildren: './password-generator/password-generator.module#PasswordGeneratorPageModule' },
 ];
 
 @NgModule({

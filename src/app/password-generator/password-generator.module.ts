@@ -5,13 +5,12 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { IonicModule } from '@ionic/angular';
 
-import { SiteFormPage } from './site-form.page';
-import { PasswordGeneratorPageModule } from '../password-generator/password-generator.module';
+import { PasswordGeneratorPage } from './password-generator.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: SiteFormPage
+    component: PasswordGeneratorPage
   }
 ];
 
@@ -20,9 +19,8 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes),
-    PasswordGeneratorPageModule
+    RouterModule.forChild(routes)
   ],
-  declarations: [SiteFormPage]
+  declarations: [PasswordGeneratorPage]
 })
-export class SiteFormPageModule {}
+export class PasswordGeneratorPageModule {}

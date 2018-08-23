@@ -2,12 +2,15 @@
   <ion-toolbar>
     <ion-title>siteForm</ion-title>
     <ion-buttons slot="secondary" (click)="cancel()">
-      <ion-button>
+      <ion-button (click)="cancel()">
         Cancel
+      </ion-button>
+      <ion-button *ngIf="upserting" (click)="delete()">
+        Delete
       </ion-button>
     </ion-buttons>
     <ion-buttons slot="primary">
-      <ion-button color="secondary" (click)="save()">
+      <ion-button color="secondary" (click)="save()" [disabled]="!canSave()">
         Save
       </ion-button>
     </ion-buttons>   
@@ -17,28 +20,28 @@
 <ion-content padding>
   <ion-list>
     <ion-item>
-      <ion-label position="fixed">Name</ion-label>
+      <ion-label position="stacked">Name</ion-label>
       <ion-input [(ngModel)]="site.name"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label position="fixed">Website</ion-label>
+      <ion-label position="stacked">Website</ion-label>
       <ion-input [(ngModel)]="site.website"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label position="fixed">Username</ion-label>
+      <ion-label position="stacked">Username</ion-label>
       <ion-input [(ngModel)]="site.credentials.name"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label position="fixed">Password</ion-label>
+      <ion-label position="stacked">Password</ion-label>
       <ion-input [type]="display ? 'text' : 'password'" [(ngModel)]="site.credentials.secret"></ion-input>
     </ion-item>
     <ion-item>
       <ion-button buttonType="bar-button" (click)="copyPassword()">Copy</ion-button>
-      <ion-button buttonType="bar-button">Generate</ion-button>
+      <ion-button buttonType="bar-button" (click)="generatePassword()">Generate</ion-button>
       <ion-button buttonType="bar-button" (click)="toggleDisplay()">{{display ? "Hide" : "Display"}}</ion-button>
     </ion-item>
     <ion-item>
-      <ion-label position="fixed">Notes</ion-label>
+      <ion-label position="stacked">Notes</ion-label>
       <ion-textarea [(ngModel)]="site.notes"></ion-textarea>
     </ion-item>
   </ion-list>

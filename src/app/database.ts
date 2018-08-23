@@ -1,3 +1,4 @@
+import * as uuid from 'uuid/v4';
 
 interface Timing {
     createdAt: number;
@@ -45,7 +46,7 @@ export const createEmptySecret = ():Secret => ({
 
 export const createEmptySite = ():Site => ({
     ...createEmptyTiming(),
-    id: 'asdf', // TODO
+    id: uuid(),
     name: '',
     website: '',
     credentials: createEmptySecret(),

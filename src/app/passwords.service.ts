@@ -51,6 +51,7 @@ export class PasswordsService {
       throw new Error('Must set password first');
     }
     const encryptedDatabase = encryptDatabase(db, this.masterPassword);
+    console.warn('encryptedDatabase length', encryptedDatabase.length);
     localStorage.setItem(localStorageToken, encryptedDatabase);
     this.database = db;
     return this;
