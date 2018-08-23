@@ -8,6 +8,7 @@ import { TabsPageRoutingModule } from './tabs.router.module';
 
 import { TabsPage } from './tabs.page';
 import { HomePageModule } from '../home/home.module';
+import { ActionsPageModule } from '../actions/actions.module';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import { HomePageModule } from '../home/home.module';
     CommonModule,
     FormsModule,
     TabsPageRoutingModule,
-    HomePageModule
+    HomePageModule,
+    ActionsPageModule
   ],
   declarations: [TabsPage]
 })

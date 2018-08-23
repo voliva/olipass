@@ -14,8 +14,12 @@ export class PasswordsService {
   constructor() {
   }
 
+  public getEncryptedDB() {
+    return localStorage.getItem(localStorageToken);
+  }
+
   public get hasDB(): boolean { // If false, will prompt user for new DB
-    return !!localStorage.getItem(localStorageToken);
+    return !!this.getEncryptedDB();
   }
 
   public get isDecrypted(): boolean {
@@ -25,7 +29,7 @@ export class PasswordsService {
   public setMasterPassword(masterPassword: string) {
     if(this.hasDB) {
       try {
-        this.database = decryptDatabase(localStorage.getItem(localStorageToken), masterPassword);
+        this.database = decryptDatabase(this.getEncryptedDB(), masterPassword);
       } catch (ex) {
         console.log(ex);
         return false;

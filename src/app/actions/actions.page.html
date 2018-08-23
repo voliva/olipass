@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Actions</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-list>
+    <ion-item>
+      <ion-button buttonType="bar-button" (click)="export()">Export</ion-button>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">File</ion-label>
+      <input type="file" (change)="handleFileInput($event.target.files)" />
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Password</ion-label>
+      <ion-input type="password" [(ngModel)]="importPassword"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-button buttonType="bar-button" (click)="import()">Import</ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>
