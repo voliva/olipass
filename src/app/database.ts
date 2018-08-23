@@ -30,6 +30,30 @@ export interface SOWDatabase {
     notes: Note[];
 }
 
+export const createEmptyTiming = ():Timing => ({
+    createdAt: new Date().getTime(),
+    updatedAt: new Date().getTime(),
+    lastVisitAt: new Date().getTime(),
+    deletedAt: null
+});
+
+export const createEmptySecret = ():Secret => ({
+    ...createEmptyTiming(),
+    name: '',
+    secret: ''
+});
+
+export const createEmptySite = ():Site => ({
+    ...createEmptyTiming(),
+    id: 'asdf', // TODO
+    name: '',
+    website: '',
+    credentials: createEmptySecret(),
+    tags: [],
+    notes: '',
+    secrets: []
+});
+
 // function getMaxDate(base: number, tm: Timing) {
 //     return [tm.createdAt, tm.deletedAt, tm.lastVisitAt, tm.updatedAt]
 //         .filter(t => !!t)

@@ -12,20 +12,6 @@ export class PasswordsService {
   private database: SOWDatabase = null;
 
   constructor() {
-    // const db: SOWDatabase = {
-    //   sites: [createSite(), createSite(),createSite(),createSite(),createSite()],
-    //   notes: [createNote(),createNote(),createNote(),createNote(),createNote()]
-    // };
-
-    // const encrypted = encryptDatabase(db, 'myPassword');
-    // const decrypted = decryptDatabase(encrypted, 'myPassword');
-    // console.log(decrypted);
-    // try {
-    //   const decrypted2 = decryptDatabase(encrypted, 'myWrongPassword');
-    //   console.log(decrypted2);
-    // }catch(ex) {
-    //   console.error(ex);
-    // }
   }
 
   public get hasDB(): boolean { // If false, will prompt user for new DB
@@ -76,32 +62,3 @@ export class PasswordsService {
     return this;
   }
 }
-
-// const createSite = (): Site => ({
-//   ...createTiming(),
-//   id: 'asdf',
-//   name: 'asdf',
-//   website: 'asdf',
-//   credentials: createSecret(),
-//   tags: ['asdf'],
-//   notes: 'asdf',
-//   secrets: [createSecret(),createSecret(),createSecret()]
-// });
-
-// const createTiming = () => ({
-//   createdAt: 123,
-//   updatedAt: 234,
-//   lastVisitAt: 345,
-//   deletedAt: 456,
-// });
-
-// const createSecret = () => ({
-//   ...createTiming(),
-//   name: 'asdf',
-//   secret: 'fdsa'
-// });
-
-// const createNote = () => ({
-//   ...createSecret(),
-//   id: 'asdf'
-// });

@@ -3,10 +3,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { LoginGuard } from './login.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'home', loadChildren: './home/home.module#HomePageModule', canActivate: [LoginGuard] },
+  { path: '', loadChildren: './tabs/tabs.module#TabsPageModule', canActivate: [LoginGuard] },
   { path: 'login', loadChildren: './login/login.module#LoginPageModule' },
   { path: 'create', loadChildren: './create/create.module#CreatePageModule' },
+  { path: 'siteForm', loadChildren: './site-form/site-form.module#SiteFormPageModule' },
 ];
 
 @NgModule({
