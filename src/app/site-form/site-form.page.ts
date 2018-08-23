@@ -26,10 +26,14 @@ export class SiteFormPage implements OnInit {
     if(id) {
       const db = this.pswService.getDB();
       this.site = db.sites.find(s => s.id === id);
+      this.site.lastVisitAt = new Date().getTime();
+      this.pswService.setDB(db);
       this.upserting = true;
+      this.display = false;
     }else {
       this.site = createEmptySite();
       this.upserting = false;
+      this.display = true;
     }
   }
 

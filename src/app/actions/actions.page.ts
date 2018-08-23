@@ -46,7 +46,7 @@ export class ActionsPage implements OnInit {
   export() {
     const base64String = this.pswService.getEncryptedDB();
     const blob = b64toBlob(base64String, 'application/octet-stream');
-    const filename = dateFormat(new Date(), 'yyyymmdd.psw');
+    const filename = dateFormat(new Date(), 'yyyymmdd') + '.psw';
     saveAs(blob, filename);
   }
 }

@@ -7,11 +7,13 @@
 <ion-content padding>
   <ion-list>
     <ion-item>
-      <ion-input #pswTxt required type="password" placeholder="Master Password"></ion-input>
+      <ion-input #pswTxt required type="password" placeholder="Master Password" clearOnEdit="false"
+        (keyup.enter)="(pswTxt.value && pswTxt.value === pswRepeatTxt.value) && create(pswTxt.value)"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-input #pswRepeatTxt required type="password" placeholder="Repeat master Password"></ion-input>
+      <ion-input #pswRepeatTxt required type="password" placeholder="Repeat master Password" clearOnEdit="false"
+        (keyup.enter)="(pswTxt.value && pswTxt.value === pswRepeatTxt.value) && create(pswTxt.value)"></ion-input>
     </ion-item>
   </ion-list>
-  <ion-button (click)="create(pswTxt.value)" [disabled]="!pswTxt.value || pswTxt.value !== pswRepeatTxt.value">Create</ion-button>
+  <ion-button (click)="create(pswTxt.value)" [disabled]="!(pswTxt.value && pswTxt.value === pswRepeatTxt.value)">Create</ion-button>
 </ion-content>

@@ -8,6 +8,7 @@
   <ion-list>
     <ion-item>
       <ion-input #pswTxt required type="password" placeholder="Password"
+        clearOnEdit="false"
         (keyup.enter)="login(pswTxt.value)"></ion-input>
     </ion-item>
   </ion-list>

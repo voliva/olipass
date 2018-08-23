@@ -7,6 +7,9 @@
 </ion-header>
 
 <ion-content>
+  <ion-toolbar>
+    <ion-searchbar (ionChange)="search($event.target.value)"></ion-searchbar>
+  </ion-toolbar>
   <ion-list>
     <ion-item *ngFor="let site of sites" (click)="editSite(site)">
       <ion-label>

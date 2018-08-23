@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>siteForm</ion-title>
-    <ion-buttons slot="secondary" (click)="cancel()">
+    <ion-buttons slot="secondary">
       <ion-button (click)="cancel()">
         Cancel
       </ion-button>
@@ -33,7 +33,10 @@
     </ion-item>
     <ion-item>
       <ion-label position="stacked">Password</ion-label>
-      <ion-input [type]="display ? 'text' : 'password'" [(ngModel)]="site.credentials.secret"></ion-input>
+      <ion-input
+        [type]="display ? 'text' : 'password'"
+        [(ngModel)]="site.credentials.secret"
+        clearOnEdit="false"></ion-input>
     </ion-item>
     <ion-item>
       <ion-button buttonType="bar-button" (click)="copyPassword()">Copy</ion-button>
