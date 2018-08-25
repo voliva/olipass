@@ -4,6 +4,7 @@ import * as dateFormat from 'dateformat';
 import { saveAs } from 'file-saver';
 import { decryptDatabase } from '../encryption';
 import { mergeDatabase } from '../database';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-actions',
@@ -15,7 +16,8 @@ export class ActionsPage implements OnInit {
   public selectedFile: File = null;
 
   constructor(
-    private pswService: PasswordsService
+    private pswService: PasswordsService,
+    private toastController: ToastController
   ) { }
 
   ngOnInit() {
@@ -24,19 +26,32 @@ export class ActionsPage implements OnInit {
   async import() {
     if(!this.canImport) return;
 
+    const password = this.importPassword || this.pswService.getMasterPassword();
+
     try {
       const encryptedDb = await blobToBase64(this.selectedFile);
-      const decryptedDb = decryptDatabase(encryptedDb, this.importPassword);
+      const decryptedDb = decryptDatabase(encryptedDb, password);
       const localDb = this.pswService.getDB();
       const mergedDb = mergeDatabase(localDb, decryptedDb);
       this.pswService.setDB(mergedDb);
+
+      const toast = await this.toastController.create({
+        message: 'Imported successfully!',
+        duration: 3000
+      });
+      toast.present();
     }catch (ex) {
-      console.log(ex);
+      console.error(ex);
+      const toast = await this.toastController.create({
+        message: 'Error importing. Wrong password?',
+        duration: 3000
+      });
+      toast.present();
     }
   }
 
   get canImport(){
-    return this.importPassword && this.selectedFile;
+    return this.selectedFile;
   }
 
   handleFileInput(files: FileList) {

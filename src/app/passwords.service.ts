@@ -46,6 +46,10 @@ export class PasswordsService {
     return true;
   }
 
+  public getMasterPassword() {
+    return this.masterPassword;
+  }
+
   public getDB() {
     return this.database;
   }
