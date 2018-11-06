@@ -29,6 +29,11 @@
                 "glob": "**/*.svg",
                 "input": "node_modules/@ionic/angular/dist/ionic/svg",
                 "output": "./svg"
+              },
+              {
+                "glob": "_redirects",
+                "input": "./",
+                "output": "./"
               }
             ],
             "styles": [
