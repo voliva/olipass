@@ -83,12 +83,15 @@ function mergeSites(local: Site[], remote: Site[]) {
 
 // Mutates local site
 function mergeSite(local: Site, remote: Site):void {
+    // We have to check this before the following loop, else `updatedAt` may get changed!
+    const hasToUpdate = local.updatedAt <= remote.updatedAt;
+
     Object.keys(remote).forEach((key: keyof Site) => {
         if(key === 'credentials') {
             local[key] = mergeSecret(local[key], remote[key]);
         }else if(key === 'secrets') {
             local[key] = mergeSecrets(local[key], remote[key]);
-        }else if(local.updatedAt < remote.updatedAt) {
+        }else if(hasToUpdate) {
             local[key] = remote[key];
         }
     });

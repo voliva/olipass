@@ -16,4 +16,17 @@
     </ion-item>
   </ion-list>
   <ion-button (click)="create(pswTxt.value)" [disabled]="!(pswTxt.value && pswTxt.value === pswRepeatTxt.value)">Create</ion-button>
+  <hr />
+  <h2>OR</h2>
+  <ion-list> <!-- TODO MOVE INTO COMPONENT OF SORTS? -->
+    <ion-item>
+      <ion-label position="stacked">File</ion-label>
+      <input type="file" (change)="handleFileInput($event.target.files)" />
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Password</ion-label>
+      <ion-input type="password" [(ngModel)]="importPassword"></ion-input>
+    </ion-item>
+  </ion-list>
+  <ion-button (click)="import()">Import</ion-button>
 </ion-content>

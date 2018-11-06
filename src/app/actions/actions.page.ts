@@ -37,7 +37,7 @@ export class ActionsPage implements OnInit {
 
       const toast = await this.toastController.create({
         message: 'Imported successfully!',
-        duration: 3000
+        duration: 1500
       });
       toast.present();
     }catch (ex) {
@@ -66,7 +66,7 @@ export class ActionsPage implements OnInit {
   }
 }
 
-function blobToBase64(blob: Blob) {
+export function blobToBase64(blob: Blob) {
   return new Promise<ArrayBuffer>((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = ev => {
@@ -86,7 +86,7 @@ function blobToBase64(blob: Blob) {
   });
 }
 
-function b64toBlob(b64Data: string, contentType: string, sliceSize = 512) {
+export function b64toBlob(b64Data: string, contentType: string, sliceSize = 512) {
   contentType = contentType || '';
   sliceSize = sliceSize || 512;
 
