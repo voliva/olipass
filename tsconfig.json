@@ -12,10 +12,11 @@
         "preserveConstEnums": true,
         "allowJs": true,
         "noUnusedLocals": true,
-        "noUnusedParameters": true,
         "noImplicitReturns": true,
         "skipLibCheck": true,
-        "moduleResolution":"Node"
+        "moduleResolution":"Node",
+        "isolatedModules": true,
+        "strictNullChecks": true
     },
     "filesGlob": [
         "typings/index.d.ts",

@@ -2,6 +2,7 @@ import React from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import * as expo from 'expo';
 import AppNavigator from './navigation/AppNavigator';
+import Provider from './redux/provider';
 
 const { AppLoading, Asset, Font } = expo;
 const Icon = (expo as any).Icon;
@@ -10,7 +11,7 @@ interface Props {
     skipLoadingScreen?: boolean;
 }
 
-export default class App extends React.Component<Props> {
+class App extends React.Component<Props> {
   state = {
     isLoadingComplete: false,
   };
@@ -47,7 +48,7 @@ export default class App extends React.Component<Props> {
         // to remove this if you are not using it in your app
         'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
       }),
-    ]).then(() => null);
+    ]).then(() => undefined);
   };
 
   _handleLoadingError = (error: Error) => {
@@ -60,6 +61,11 @@ export default class App extends React.Component<Props> {
     this.setState({ isLoadingComplete: true });
   };
 }
+
+export default (props: Props) =>
+    <Provider>
+        <App skipLoadingScreen={props.skipLoadingScreen} />
+    </Provider>;
 
 const styles = StyleSheet.create({
   container: {
