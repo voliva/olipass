@@ -8,13 +8,15 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "eject": "expo eject",
-    "test": "node ./node_modules/jest/bin/jest.js --watchAll"
+    "test": "node ./node_modules/jest/bin/jest.js --watchAll",
+    "postinstall": "patch-package"
   },
   "jest": {
     "preset": "jest-expo"
   },
   "dependencies": {
     "@expo/samples": "2.1.1",
+    "cryptojslib": "^3.1.2",
     "expo": "^31.0.2",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
@@ -30,6 +32,8 @@
     "babel-preset-expo": "^5.0.0",
     "concurrently": "^4.0.1",
     "jest-expo": "^31.0.0",
+    "patch-package": "^5.1.1",
+    "postinstall-postinstall": "^2.0.0",
     "rimraf": "^2.6.2",
     "ts-jest": "^23.10.4",
     "tslint": "^5.11.0",

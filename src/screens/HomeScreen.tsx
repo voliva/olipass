@@ -46,7 +46,7 @@ export default class HomeScreen extends React.Component {
 
             <Text style={styles.getStartedText}>
               Change this text and your app will automatically reload.
-              => Changed
+              => Changed {(window as any).CryptoJS ? 'has' : 'no has'}
             </Text>
           </View>
 
