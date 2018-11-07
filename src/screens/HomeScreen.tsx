@@ -14,11 +14,33 @@ import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
 import { NavigationScreenOptions } from 'react-navigation';
+import pako from 'pako';
+
+declare var CryptoJS: any;
+
+const myString = 'Change this encrypted text and your app will automatically reload.';
+const password = 'awesome';
+
+function encryptString(rawStringDB: string, password: string): string {
+    const deflatedString = pako.deflate(rawStringDB, { to: 'string' });;
+    return CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(deflatedString), password).toString();
+}
+
+function decryptString(encryptedDB: string, password: string) {
+    const deflatedString:string = CryptoJS.AES.decrypt(encryptedDB, password).toString(CryptoJS.enc.Utf8);
+    return pako.inflate(deflatedString, { to: 'string' });
+}
 
 export default class HomeScreen extends React.Component {
   static navigationOptions: NavigationScreenOptions = {
     header: null,
   };
+
+  private encryptedString: string;
+  constructor(props: any) {
+    super(props);
+    this.encryptedString = encryptString(myString, password);
+  }
 
   render() {
     return (
@@ -45,8 +67,8 @@ export default class HomeScreen extends React.Component {
             </View>
 
             <Text style={styles.getStartedText}>
-              Change this text and your app will automatically reload.
-              => Changed {(window as any).CryptoJS ? 'has' : 'no has'}
+              { this.encryptedString }
+              { decryptString(this.encryptedString, password) }
             </Text>
           </View>
 
