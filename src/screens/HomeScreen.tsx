@@ -7,13 +7,16 @@ import {
   Text,
   TouchableOpacity,
   View,
+  FlexAlignType,
+  ImageStyle,
 } from 'react-native';
 import { WebBrowser } from 'expo';
 
 import { MonoText } from '../components/StyledText';
+import { NavigationScreenOptions } from 'react-navigation';
 
 export default class HomeScreen extends React.Component {
-  static navigationOptions = {
+  static navigationOptions: NavigationScreenOptions = {
     header: null,
   };
 
@@ -25,10 +28,10 @@ export default class HomeScreen extends React.Component {
             <Image
               source={
                 __DEV__
-                  ? require('../assets/images/robot-dev.png')
-                  : require('../assets/images/robot-prod.png')
+                  ? require('../../assets/images/robot-dev.png')
+                  : require('../../assets/images/robot-prod.png')
               }
-              style={styles.welcomeImage}
+              style={styles.welcomeImage as ImageStyle}
             />
           </View>
 
@@ -43,6 +46,7 @@ export default class HomeScreen extends React.Component {
 
             <Text style={styles.getStartedText}>
               Change this text and your app will automatically reload.
+              => Changed
             </Text>
           </View>
 
@@ -147,14 +151,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   tabBarInfoContainer: {
-    position: 'absolute',
+    position: 'absolute' as 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     ...Platform.select({
       ios: {
         shadowColor: 'black',
-        shadowOffset: { height: -3 },
+        shadowOffset: { height: -3, width: 0 },
         shadowOpacity: 0.1,
         shadowRadius: 3,
       },
@@ -162,7 +166,7 @@ const styles = StyleSheet.create({
         elevation: 20,
       },
     }),
-    alignItems: 'center',
+    alignItems: 'center' as FlexAlignType,
     backgroundColor: '#fbfbfb',
     paddingVertical: 20,
   },
@@ -184,5 +188,5 @@ const styles = StyleSheet.create({
   helpLinkText: {
     fontSize: 14,
     color: '#2e78b7',
-  },
+  }
 });
