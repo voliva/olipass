@@ -1,75 +1,57 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View } from 'react-native';
-import * as expo from 'expo';
-import AppNavigator from './navigation/AppNavigator';
 import Provider from './redux/provider';
+import { MemoryRouter, Link, Route, Switch } from 'react-router-native';
+import { View, Text, StyleSheet } from 'react-native';
 
-const { AppLoading, Asset, Font } = expo;
-const Icon = (expo as any).Icon;
+const Home = () => <Text style={styles.header}>Home</Text>;
 
-interface Props {
-    skipLoadingScreen?: boolean;
-}
+const About = () => <Text style={styles.header}>About</Text>;
 
-class App extends React.Component<Props> {
-  state = {
-    isLoadingComplete: false,
-  };
+const Topics = () => <Text style={styles.header}>Topics</Text>;
 
-  render() {
-    if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
-      return (
-        <AppLoading
-          startAsync={this._loadResourcesAsync}
-          onError={this._handleLoadingError}
-          onFinish={this._handleFinishLoading}
-        />
-      );
-    } else {
-      return (
+const App = () => (
+    <MemoryRouter>
         <View style={styles.container}>
-          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-          <AppNavigator />
+            <View style={styles.nav}>
+                <Link to="/" underlayColor="#f0f4f7" style={styles.navItem}>
+                    <Text>Home</Text>
+                </Link>
+                <Link to="/about" underlayColor="#f0f4f7" style={styles.navItem}>
+                    <Text>About</Text>
+                </Link>
+                <Link to="/topics" underlayColor="#f0f4f7" style={styles.navItem}>
+                    <Text>Topics</Text>
+                </Link>
+            </View>
+
+            <Route path="/about" component={About} />
+            <Route path="/" component={Topics} />
+            <Route path="/" component={Home} />
         </View>
-      );
-    }
-  }
-
-  _loadResourcesAsync = async () => {
-    return Promise.all([
-      Asset.loadAsync([
-        require('../assets/images/robot-dev.png'),
-        require('../assets/images/robot-prod.png'),
-      ]),
-      Font.loadAsync({
-        // This is the font that we are using for our tab bar
-        ...Icon.Ionicons.font,
-        // We include SpaceMono because we use it in HomeScreen.js. Feel free
-        // to remove this if you are not using it in your app
-        'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
-      }),
-    ]).then(() => undefined);
-  };
-
-  _handleLoadingError = (error: Error) => {
-    // In this case, you might want to report the error to your error
-    // reporting service, for example Sentry
-    console.warn(error);
-  };
-
-  _handleFinishLoading = () => {
-    this.setState({ isLoadingComplete: true });
-  };
-}
-
-export default (props: Props) =>
-    <Provider>
-        <App skipLoadingScreen={props.skipLoadingScreen} />
-    </Provider>;
+    </MemoryRouter>
+)
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
+    marginTop: 25,
+    padding: 10
   },
+  header: {
+    fontSize: 20
+  },
+  nav: {
+    flexDirection: "row",
+    justifyContent: "space-around"
+  },
+  navItem: {
+    flex: 1,
+    alignItems: "center",
+    padding: 10
+  }
 });
+
+export default () => (
+    <Provider>
+        <App />
+    </Provider>
+);
