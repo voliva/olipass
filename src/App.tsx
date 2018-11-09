@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { ComponentType } from 'react';
 import Provider from './redux/provider';
-import { MemoryRouter, Link, Route, Switch } from 'react-router-native';
 import { View, Text, StyleSheet } from 'react-native';
+import { ApplicationState } from './redux';
+import { connect } from 'react-redux';
+import compose from 'ramda/es/compose';
+import { branch, renderNothing } from 'recompose';
 
 const Home = () => <Text style={styles.header}>Home</Text>;
 
@@ -9,27 +12,47 @@ const About = () => <Text style={styles.header}>About</Text>;
 
 const Topics = () => <Text style={styles.header}>Topics</Text>;
 
-const App = () => (
-    <MemoryRouter>
-        <View style={styles.container}>
-            <View style={styles.nav}>
-                <Link to="/" underlayColor="#f0f4f7" style={styles.navItem}>
-                    <Text>Home</Text>
-                </Link>
-                <Link to="/about" underlayColor="#f0f4f7" style={styles.navItem}>
-                    <Text>About</Text>
-                </Link>
-                <Link to="/topics" underlayColor="#f0f4f7" style={styles.navItem}>
-                    <Text>Topics</Text>
-                </Link>
-            </View>
+// compose<V0, T1, T2>(fn1: (x: T1) => T2, fn0: (x0: V0) => T1): (x0: V0) => T2;
 
-            <Route path="/about" component={About} />
-            <Route path="/" component={Topics} />
-            <Route path="/" component={Home} />
+const hide = Symbol('hide');
+const renderIfSelector = <T extends any>(selector: (state: ApplicationState) => boolean) => compose<
+    ComponentType<T>,
+    ComponentType<T & { shouldDisplay: boolean }>,
+    ComponentType<T>
+>(
+    connect(state => ({
+        [hide]: selector(state)
+    })),
+    branch(props => props[hide], renderNothing)
+);
+
+const RoutedHome = renderIfSelector(
+    state => true
+)(Home);
+const RoutedAbout = renderIfSelector(
+    state => true
+)(About);
+const RoutedTopics = renderIfSelector(
+    state => true
+)(Topics);
+
+const App = () => (<View style={styles.container}>
+    <View style={styles.nav}>
+        <View style={styles.navItem}>
+            <Text>Home</Text>
         </View>
-    </MemoryRouter>
-)
+        <View style={styles.navItem}>
+            <Text>About</Text>
+        </View>
+        <View style={styles.navItem}>
+            <Text>Topics</Text>
+        </View>
+    </View>
+
+    <RoutedHome />
+    <RoutedAbout />
+    <RoutedTopics />
+</View>)
 
 const styles = StyleSheet.create({
   container: {
