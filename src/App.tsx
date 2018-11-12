@@ -1,7 +1,6 @@
 import React, { ComponentType } from 'react';
-import Provider from './redux/provider';
-import { View, Text, StyleSheet } from 'react-native';
-import { ApplicationState } from './redux';
+import { View, Text, StyleSheet, Button } from 'react-native';
+import { ApplicationState, Provider } from './redux';
 import { connect } from 'react-redux';
 import compose from 'ramda/es/compose';
 import { branch, renderNothing } from 'recompose';
@@ -20,7 +19,7 @@ const renderIfSelector = <T extends any>(selector: (state: ApplicationState) => 
     ComponentType<T & { shouldDisplay: boolean }>,
     ComponentType<T>
 >(
-    connect(state => ({
+    connect((state: ApplicationState) => ({
         [hide]: selector(state)
     })),
     branch(props => props[hide], renderNothing)
@@ -39,13 +38,13 @@ const RoutedTopics = renderIfSelector(
 const App = () => (<View style={styles.container}>
     <View style={styles.nav}>
         <View style={styles.navItem}>
-            <Text>Home</Text>
+            <Button title='Home' onPress={() => null} />
         </View>
         <View style={styles.navItem}>
-            <Text>About</Text>
+            <Button title='About' onPress={() => null} />
         </View>
         <View style={styles.navItem}>
-            <Text>Topics</Text>
+            <Button title='Topics' onPress={() => null} />
         </View>
     </View>
 

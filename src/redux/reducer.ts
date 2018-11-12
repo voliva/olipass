@@ -1,2 +1,6 @@
+import { combineReducers } from "redux";
+import navigation from './navigation';
 
-export default (state: any, action: any) => state;
+export default combineReducers({
+    navigation
+});
