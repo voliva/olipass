@@ -7,7 +7,7 @@
         "outDir": "build",
         "allowSyntheticDefaultImports": true,
         "noImplicitAny": true,
-        "sourceMap": true,
+        "sourceMap": false,
         "experimentalDecorators": true,
         "preserveConstEnums": true,
         "allowJs": true,
