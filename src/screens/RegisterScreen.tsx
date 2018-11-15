@@ -2,7 +2,7 @@ import React from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { connect } from "react-redux";
 import { compose, mapProps, withState } from "recompose";
-import { createNewDB } from "../redux/passwords";
+import { register } from "../redux/auth";
 
 interface RegisterFormProps {
     password: string,
@@ -76,11 +76,9 @@ const styles = StyleSheet.create({
     }
 })
 
-export default compose<RegisterFormProps, {
-    onSubmit: (password: string) => void
-}>(
+export default compose<RegisterFormProps, {}>(
     connect(null, {
-        onSubmit: createNewDB
+        onSubmit: register
     }),
     withState('password', 'onPasswordChange', ''),
     withState('repeat', 'onRepeatChange', ''),
