@@ -1,7 +1,7 @@
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import React from "react";
-import { compose, withState, mapProps } from "recompose";
+import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { connect } from "react-redux";
+import { compose, mapProps, withState } from "recompose";
 import { createNewDB } from "../redux/passwords";
 
 interface RegisterFormProps {
@@ -28,27 +28,29 @@ const getRepeatStyle = (props: RegisterFormProps) =>
     isEnabled(props) ? [styles.input, styles.validInput] :
     [styles.input, styles.inValidInput];
 
-const RegisterForm = (props: RegisterFormProps) => <View style={styles.container}>
-    <Text style={styles.explanation}>Welcome! To create a new password database, you need to set your master password</Text>
-    <View style={styles.form}>
-        <TextInput
-            placeholder='Password'
-            value={props.password}
-            onChangeText={props.onPasswordChange} 
-            style={getPasswordStyle(props)}
-            secureTextEntry />
-        <TextInput
-            placeholder='Repeat password'
-            value={props.repeat}
-            onChangeText={props.onRepeatChange} 
-            style={getRepeatStyle(props)}
-            secureTextEntry />
-    </View>
-    <Button
-        title='Create'
-        onPress={props.onSubmit}
-        disabled={!isEnabled(props)} />
-</View>;
+const RegisterForm = (props: RegisterFormProps) =>
+    <View
+        style={styles.container}>
+        <Text style={styles.explanation}>Welcome! To create a new password database, you need to set your master password</Text>
+        <View style={styles.form}>
+            <TextInput
+                placeholder='Password'
+                value={props.password}
+                onChangeText={props.onPasswordChange} 
+                style={getPasswordStyle(props)}
+                secureTextEntry />
+            <TextInput
+                placeholder='Repeat password'
+                value={props.repeat}
+                onChangeText={props.onRepeatChange} 
+                style={getRepeatStyle(props)}
+                secureTextEntry />
+        </View>
+        <Button
+            title='Create'
+            onPress={props.onSubmit}
+            disabled={!isEnabled(props)} />
+    </View>;
 
 const styles = StyleSheet.create({
     container: {
