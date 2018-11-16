@@ -1,10 +1,9 @@
 import { Action } from "redux";
 import { fork, put, takeEvery } from "redux-saga/effects";
-import { PasswordsAction, loginFailed, loginFailedExpired } from ".";
+import { PasswordsAction } from ".";
 import { navigate, navigateReplace, Screen } from "../../navigation";
 import { dbLoaded } from "../passwords";
 import { PasswordsState } from "../passwords/state";
-import { delay } from "redux-saga";
 
 function* initSaga() {
     /* TODO Fetch state from local database (realm.io) - If we have database, navigate to register, else navigate to login
@@ -26,13 +25,13 @@ function* createDB(action: Action) {
 function* login(action: Action) {
     /* TODO try to decrypt the database with the password, if successful, navigate to SiteList */
 
-    // yield put(dbLoaded(emptyDatabase));
-    // yield navigate(Screen.SiteList);
+    yield put(dbLoaded(emptyDatabase));
+    yield navigate(Screen.SiteList);
 
     // We can actually use react-native-simple-toast when we unlink expo, and basically use as a side effect, without emiting an extra redux action
-    yield put(loginFailed());
-    yield delay(2000);
-    yield put(loginFailedExpired());
+    // yield put(loginFailed());
+    // yield delay(2000);
+    // yield put(loginFailedExpired());
 }
 
 export default function* mySaga(): any {

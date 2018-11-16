@@ -26,7 +26,7 @@ const LoginForm = (props: LoginFormProps) =>
         <Button
             title='Login'
             onPress={props.onSubmit}
-            disabled={!props.password} />
+            disabled={false} />
     </View>;
 
 const LoginError = renderWhenSelector(

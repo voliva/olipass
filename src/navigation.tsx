@@ -14,6 +14,8 @@ import { LoginScreen,
     SecretListScreen,
     SyncScreen
 } from './screens';
+import tabBarIcon from './components/tabBarIcon';
+import { IconSets } from './components/iconSets';
 
 export enum Screen {
     Splash = 'Splash',
@@ -41,27 +43,31 @@ export default createSwitchNavigator({
         }
     }),
     Main: createBottomTabNavigator({
-        [Screen.SiteList]: SiteListScreen,
-        [Screen.SecretList]: SecretListScreen,
-        [Screen.Sync]: SyncScreen,
+        [Screen.SiteList]: {
+            screen: SiteListScreen,
+            navigationOptions: {
+                title: 'Sites',
+                tabBarIcon: tabBarIcon(IconSets.Web)
+            }
+        },
+        [Screen.SecretList]: {
+            screen: SecretListScreen,
+            navigationOptions: {
+                title: 'Secrets',
+                tabBarIcon: tabBarIcon(IconSets.Notes)
+            }
+        },
+        [Screen.Sync]: {
+            screen: SyncScreen,
+            navigationOptions: {
+                title: 'Sync',
+                tabBarIcon: tabBarIcon(IconSets.Sync)
+            }
+        },
     }),
 }, {
     initialRouteName: Screen.Splash
 });
-
-// mainNavigator.navigationOptions = {
-//     tabBarLabel: 'Home',
-//     tabBarIcon: (({ focused }) => (
-//         <TabBarIcon
-//         focused={focused}
-//         name={
-//             Platform.OS === 'ios'
-//             ? `ios-information-circle${focused ? '' : '-outline'}`
-//             : 'md-information-circle'
-//         }
-//         />
-//     )) as NavigationTabScreenOptions['tabBarIcon'],
-// };
 
 let deferredNavigator = deferPromise<NavigationContainerComponent>();
 

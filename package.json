@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@expo/samples": "2.1.1",
+    "@types/expo__vector-icons": "^6.2.3",
     "cryptojslib": "^3.1.2",
     "expo": "^31.0.2",
     "pako": "^1.0.6",
