@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Text, View, StyleSheet } from 'react-native';
-import { Header, SearchBar } from 'react-native-elements';
+import { SearchBar } from 'react-native-elements';
 import { mapProps, compose, withState } from 'recompose';
 import { FlatPressList } from '../components';
 import { sitePressed } from '../redux/ui';
@@ -27,9 +27,6 @@ const getSiteKey = (site: Site) => site.id;
 
 const SiteListScreen = (props: Props) => (
     <View style={{flex: 1}}>
-        <Header
-            centerComponent={{ text: 'OliPass', style: { color: '#fff' } }}
-        />
         <SearchBar
             onChangeText={props.onChangeText}
             onClearText={props.onClearText}

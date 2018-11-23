@@ -1,6 +1,6 @@
 import { createAction } from "redux-actions";
 
-enum UIAction {
+export enum UIAction {
     SitePressed = 'SitePressed'
 }
 

@@ -9,7 +9,8 @@ function* initSaga() {
     /* TODO Fetch state from local database (realm.io) - If we have database, navigate to register, else navigate to login
     It's not compatible with expo, so I'll just mock it here.
     */
-    yield navigateReplace(Screen.Login);
+    // yield navigateReplace(Screen.Login);
+    yield navigate(Screen.SiteList);
 }
 
 const emptyDatabase: PasswordsState = {

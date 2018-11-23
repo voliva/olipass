@@ -1,21 +1,23 @@
 import {
+    createBottomTabNavigator,
     createStackNavigator,
     createSwitchNavigator,
     NavigationActions,
     NavigationContainerComponent,
-    StackActions,
-    createBottomTabNavigator
+    StackActions
 } from 'react-navigation';
+import { IconSets } from './components/iconSets';
+import tabBarIcon from './components/tabBarIcon';
 import { deferPromise } from './deferPromise';
-import { LoginScreen,
+import {
+    LoginScreen,
     RegisterScreen,
+    SecretListScreen,
     SiteListScreen,
     SplashScreen,
-    SecretListScreen,
     SyncScreen
 } from './screens';
-import tabBarIcon from './components/tabBarIcon';
-import { IconSets } from './components/iconSets';
+import SecretFormScreen from './screens/SecretFormScreen';
 
 export enum Screen {
     Splash = 'Splash',
@@ -23,7 +25,8 @@ export enum Screen {
     Login = 'Login',
     SecretList = 'SecretList',
     SiteList = 'SiteList',
-    Sync = 'Sync'
+    Sync = 'Sync',
+    SiteForm = 'SiteForm'
 }
 
 export default createSwitchNavigator({
@@ -42,28 +45,36 @@ export default createSwitchNavigator({
             }
         }
     }),
-    Main: createBottomTabNavigator({
-        [Screen.SiteList]: {
-            screen: SiteListScreen,
+    Main: createStackNavigator({
+        Root: {
+            screen: createBottomTabNavigator({
+                [Screen.SiteList]: {
+                    screen: SiteListScreen,
+                    navigationOptions: {
+                        title: 'Sites',
+                        tabBarIcon: tabBarIcon(IconSets.Web)
+                    }
+                },
+                [Screen.SecretList]: {
+                    screen: SecretListScreen,
+                    navigationOptions: {
+                        title: 'Secrets',
+                        tabBarIcon: tabBarIcon(IconSets.Notes)
+                    }
+                },
+                [Screen.Sync]: {
+                    screen: SyncScreen,
+                    navigationOptions: {
+                        title: 'Sync',
+                        tabBarIcon: tabBarIcon(IconSets.Sync)
+                    }
+                },
+            }),
             navigationOptions: {
-                title: 'Sites',
-                tabBarIcon: tabBarIcon(IconSets.Web)
+                title: 'OliPass'
             }
         },
-        [Screen.SecretList]: {
-            screen: SecretListScreen,
-            navigationOptions: {
-                title: 'Secrets',
-                tabBarIcon: tabBarIcon(IconSets.Notes)
-            }
-        },
-        [Screen.Sync]: {
-            screen: SyncScreen,
-            navigationOptions: {
-                title: 'Sync',
-                tabBarIcon: tabBarIcon(IconSets.Sync)
-            }
-        },
+        [Screen.SiteForm]: SecretFormScreen
     }),
 }, {
     initialRouteName: Screen.Splash
