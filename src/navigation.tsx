@@ -18,6 +18,7 @@ import {
     SyncScreen
 } from './screens';
 import SecretFormScreen from './screens/SecretFormScreen';
+import PasswordGeneratorScreen from './screens/PasswordGeneratorScreen';
 
 export enum Screen {
     Splash = 'Splash',
@@ -26,7 +27,8 @@ export enum Screen {
     SecretList = 'SecretList',
     SiteList = 'SiteList',
     Sync = 'Sync',
-    SiteForm = 'SiteForm'
+    SiteForm = 'SiteForm',
+    PasswordGenerator = 'PasswordGenerator'
 }
 
 export default createSwitchNavigator({
@@ -74,7 +76,8 @@ export default createSwitchNavigator({
                 title: 'OliPass'
             }
         },
-        [Screen.SiteForm]: SecretFormScreen
+        [Screen.SiteForm]: SecretFormScreen,
+        [Screen.PasswordGenerator]: PasswordGeneratorScreen
     }),
 }, {
     initialRouteName: Screen.Splash

@@ -2,6 +2,8 @@ import React from "react";
 import { View, Button, StyleSheet } from "react-native";
 import { FieldInputProps, FieldInput } from "./fieldInput";
 import { compose, withState, mapProps } from "recompose";
+import { connect } from "react-redux";
+import { generatePasswordPressed } from "../../redux/ui";
 
 interface PasswordGeneratorProps extends FieldInputProps {
     copy: () => void;
@@ -31,11 +33,13 @@ const Component = (props: PasswordGeneratorProps) => <View>
 </View>
 
 export default compose<PasswordGeneratorProps, FieldInputProps>(
+    connect(null, {
+        openGeneratePassword: generatePasswordPressed
+    }),
     withState('isPassword', 'setIsPassword', true),
     mapProps((props: any) => ({
         ...props,
         copy: () => console.log('copy'),
-        openGeneratePassword: () => console.log('openGeneratePassword'),
         toggleDisplay: () => props.setIsPassword(!props.isPassword)
     }))
 )(Component);
