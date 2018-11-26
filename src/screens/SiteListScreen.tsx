@@ -1,10 +1,12 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { Text, View, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { SearchBar } from 'react-native-elements';
-import { mapProps, compose, withState } from 'recompose';
+import { connect } from 'react-redux';
+import { compose, mapProps, withState } from 'recompose';
 import { FlatPressList } from '../components';
-import { sitePressed } from '../redux/ui';
+import { sitePressed } from '../redux/sites';
+import { getAllSites } from '../redux/sites/selectors';
+import { createMapStateToProps } from '../utils/createMapStateToProps';
 
 interface Site {
     id: string;
@@ -40,37 +42,23 @@ const SiteListScreen = (props: Props) => (
     </View>
 );
 
-const sites: Site[] = [
-    'reddit',
-    'gmail',
-    'amazon',
-    'foo',
-    'bar',
-    'lkmreg',
-    'lmkaerg',
-    'aaemrlg',
-    'laergml',
-    'amrlgkmeagr',
-    'aaesmrlg',
-    'laer3gml',
-    'amrlgkmeag1r'
-].map(s => ({
-    id: s,
-    name: s
-}));
-
 const filterSites = (sites: Site[], filterText: string) => filterText.trim().length ? sites.filter(site => {
     return site.name.toLocaleLowerCase().includes(filterText.toLocaleLowerCase());
 }) : sites;
 
 export default compose<Props, {}>(
-    connect(null, {
-        onSitePress: sitePressed,
-    }),
+    connect(
+        createMapStateToProps({
+            sites: getAllSites
+        }),
+        {
+            onSitePress: sitePressed
+        }
+    ),
     withState('filterText', 'setFilterText', ''),
     mapProps((props: any) => ({
         ...props,
-        sites: filterSites(sites, props.filterText),
+        sites: filterSites(props.sites, props.filterText),
         onChangeText: (txt: string) => props.setFilterText(txt),
         onClearText: () => props.setFilterText('')
     }))

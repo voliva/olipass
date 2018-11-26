@@ -1,28 +1,25 @@
 import { always } from "ramda";
-import { combineReducers } from "redux";
-import { createAction } from "redux-actions";
-import rereducer from "rereducer";
 import path from "ramda/es/path";
+import { combineReducers } from "redux";
+import rereducer from "rereducer";
+import { createAction } from "../actions";
 
-export enum PasswordsAction {
+export enum AuthAction {
     Register = 'Register',
     Login = 'Login',
     LoginFailed = 'LoginFailed',
     LoginFailedEx = 'LoginFailedEx',
 }
 
-export const register = createAction(PasswordsAction.Register, (password: string) => ({password}));
-export const login = createAction(PasswordsAction.Login, (password: string) => ({password}));
-export const loginFailed = createAction(PasswordsAction.LoginFailed, () => void 0);
-export const loginFailedExpired = createAction(PasswordsAction.LoginFailedEx, () => void 0);
+export const register = (password: string) => createAction(AuthAction.Register, {password});
+export const login = (password: string) => createAction(AuthAction.Login, {password});
+export const loginFailed = () => createAction(AuthAction.LoginFailed);
+export const loginFailedExpired = () => createAction(AuthAction.LoginFailedEx);
 
 const loginFailedReducer = rereducer(
     false,
-    [PasswordsAction.LoginFailed, () => {
-        console.log('login failed');
-        return true;
-    }], // always(true)],
-    [PasswordsAction.LoginFailedEx, always(false)]
+    [AuthAction.LoginFailed, always(true)],
+    [AuthAction.LoginFailedEx, always(false)]
 );
 
 export const hasFailedLogin = path<boolean>(['auth', 'loginFailed']);

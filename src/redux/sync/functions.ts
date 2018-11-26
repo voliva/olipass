@@ -1,17 +1,16 @@
 import * as uuid from 'uuid/v4';
-import { Note, PasswordsState, Secret, Site, Timing } from "./state";
+import { Timing, Versioned } from '../globals';
+import { Site } from '../sites/state';
 
-export const createEmptyTiming = ():Timing => ({
-    createdAt: new Date().getTime(),
+export const createEmptyTiming = (): Timing => ({
     updatedAt: new Date().getTime(),
     lastVisitAt: new Date().getTime(),
     deletedAt: null
 });
 
-export const createEmptySecret = ():Secret => ({
-    ...createEmptyTiming(),
-    name: '',
-    secret: ''
+export const createVersionedValue = <T>(value: T):Versioned<T> => ({
+    timing: createEmptyTiming(),
+    value
 });
 
 export const createEmptySite = ():Site => ({
@@ -19,16 +18,15 @@ export const createEmptySite = ():Site => ({
     id: uuid(),
     name: '',
     website: '',
-    credentials: createEmptySecret(),
-    tags: [],
-    notes: '',
-    secrets: []
+    username: createVersionedValue(''),
+    password: createVersionedValue(''),
+    notes: createVersionedValue('')
 });
 
 export function mergeDatabase(local: PasswordsState, remote: PasswordsState): PasswordsState {
     return {
         sites: mergeSites(local.sites, remote.sites),
-        notes: mergeSecrets(local.notes, remote.notes)
+        // notes: mergeSecrets(local.notes, remote.notes)
     }
 }
 

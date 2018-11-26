@@ -1,16 +1,17 @@
-import Site from "./site";
-import { ScrollView, Button } from "react-native";
 import React from "react";
-import { FieldInput } from "./fieldInput";
+import { Button, ScrollView } from "react-native";
 import { noop } from "redux-saga/utils";
+import { Unversioned } from "../../redux/globals";
+import { Site } from "../../redux/sites/state";
+import { FieldInput } from "./fieldInput";
 import PasswordGenerator from './passwordGenerator';
 
 export interface Props {
-    site: Site;
-    onValueChange: (value: string, id: keyof Site) => void;
+    site: Unversioned<Site>;
+    onValueChange: (value: string, id: keyof Unversioned<Site>) => void;
 }
 
-export const SecretFormScreen = (props: Props) => (
+export const SiteFormScreen = (props: Props) => (
     <ScrollView style={{flex: 1}}>
         <FieldInput
             id='name'

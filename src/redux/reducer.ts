@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
 import auth from './auth';
-import passwords from './passwords';
+import sites from './sites';
 
 export default combineReducers({
     auth,
-    passwords,
+    sites,
 });

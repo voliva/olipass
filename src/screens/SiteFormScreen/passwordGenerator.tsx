@@ -1,9 +1,9 @@
 import React from "react";
-import { View, Button, StyleSheet } from "react-native";
-import { FieldInputProps, FieldInput } from "./fieldInput";
-import { compose, withState, mapProps } from "recompose";
+import { Button, StyleSheet, View } from "react-native";
 import { connect } from "react-redux";
-import { generatePasswordPressed } from "../../redux/ui";
+import { compose, mapProps, withState } from "recompose";
+import { generatePasswordPressed } from "../../redux/sites";
+import { FieldInput, FieldInputProps } from "./fieldInput";
 
 interface PasswordGeneratorProps extends FieldInputProps {
     copy: () => void;
@@ -12,7 +12,7 @@ interface PasswordGeneratorProps extends FieldInputProps {
 }
 
 const Component = (props: PasswordGeneratorProps) => <View>
-    <FieldInput {...props} />
+    <FieldInput {...props} isPassword />
     <View style={styles.buttonGroup}>
         <View style={styles.buttonGroupBtn}>
             <Button
@@ -26,7 +26,7 @@ const Component = (props: PasswordGeneratorProps) => <View>
         </View>
         <View style={styles.buttonGroupBtn}>
             <Button
-                title={props.isPassword ? 'Display' : 'Hide'}
+                title={props.isSecret ? 'Display' : 'Hide'}
                 onPress={props.toggleDisplay} />
         </View>
     </View>
@@ -36,11 +36,11 @@ export default compose<PasswordGeneratorProps, FieldInputProps>(
     connect(null, {
         openGeneratePassword: generatePasswordPressed
     }),
-    withState('isPassword', 'setIsPassword', true),
+    withState('isSecret', 'setIsSecret', true),
     mapProps((props: any) => ({
         ...props,
         copy: () => console.log('copy'),
-        toggleDisplay: () => props.setIsPassword(!props.isPassword)
+        toggleDisplay: () => props.setIsSecret(!props.isSecret)
     }))
 )(Component);
 
