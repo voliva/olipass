@@ -1,6 +1,5 @@
 import React from "react";
 import { Button, ScrollView } from "react-native";
-import { noop } from "redux-saga/utils";
 import { Unversioned } from "../../redux/globals";
 import { Site } from "../../redux/sites/state";
 import { FieldInput } from "./fieldInput";
@@ -8,7 +7,9 @@ import PasswordGenerator from './passwordGenerator';
 
 export interface Props {
     site: Unversioned<Site>;
+    canDelete: boolean;
     onValueChange: (value: string, id: keyof Unversioned<Site>) => void;
+    onDelete: () => void;
 }
 
 export const SiteFormScreen = (props: Props) => (
@@ -39,9 +40,9 @@ export const SiteFormScreen = (props: Props) => (
             value={props.site.notes}
             onChange={props.onValueChange}
             multiline />
-        <Button
+        { props.canDelete && <Button
             title='Delete'
-            onPress={noop}
-            color='#f00' />
+            onPress={props.onDelete}
+            color='#f00' /> }
     </ScrollView>
 );

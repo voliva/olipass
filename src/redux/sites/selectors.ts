@@ -51,3 +51,9 @@ export const editingSiteIsReadyToSave = createSelector(
     getSiteBeingEdited,
     state => state && !!(state.name.length + state.website.length) && !!state.password.length
 );
+
+export const editingSiteCanBeDeleted = createSelector(
+    getSiteBeingEdited,
+    getAllSiteIds,
+    (siteBeingEdited, sites) => siteBeingEdited && sites.some(id => id === siteBeingEdited.id)
+);

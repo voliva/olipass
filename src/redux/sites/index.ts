@@ -16,7 +16,8 @@ export enum SitesAction {
     RequestPswRegen = 'RequestPswRegen',
     PswRegenerated = 'PswRegenerated',
     GenPswAccepted = 'GenPswAccepted',
-    SaveSitePressed = 'SaveSitePressed'
+    SaveSitePressed = 'SaveSitePressed',
+    DeleteSite = 'DeleteSite'
 }
 
 export const sitePressed = (site: Site) => createAction(SitesAction.SitePressed, { site });
@@ -28,12 +29,17 @@ export const acceptGeneratedPassword = () => createAction(SitesAction.GenPswAcce
 export const saveSitePressed = () => createAction(SitesAction.SaveSitePressed);
 export const createSitePressed = () => createAction(SitesAction.CreateSitePressed);
 export const sitePrepared = (site: Unversioned<Site>) => createAction(SitesAction.NewSitePrepared, { site });
+export const deleteSite = (siteId: string) => createAction(SitesAction.DeleteSite, { siteId });
 
 /// site
-const normalizeSites = (sites: Site[]) => normalize(sites);
+const excludeDeleted = (state: SitesState['sites']) => ({
+    ...state,
+    allIds: state.allIds.filter(id => !state.byId[id].deletedAt)
+});
 
 const normalizeSiteDB = compose(
-    normalizeSites,
+    excludeDeleted,
+    normalize,
     payload('db', 'sites')
 );
 
@@ -60,13 +66,30 @@ const upsertSite = (state: SitesState['sites'], {args}: { args: [SitesState['sit
     }
 }
 
+const deleteSiteById = (state: SitesState['sites'], { payload: { siteId } }: ReturnType<typeof deleteSite>) => {
+    if(!state.byId[siteId]) return state;
+
+    const deletedAt = new Date().getTime();
+    return {
+        byId: {
+            ...state.byId,
+            [siteId]: {
+                ...state.byId[siteId],
+                deletedAt
+            }
+        },
+        allIds: state.allIds.filter(id => id !== siteId)
+    }
+}
+
 const sites = rereducer<SitesState['sites'], any>(
     {
         byId: {},
         allIds: []
     },
     [SyncAction.DBLoaded, normalizeSiteDB],
-    [SitesAction.SaveSitePressed, upsertSite]
+    [SitesAction.SaveSitePressed, upsertSite],
+    [SitesAction.DeleteSite, deleteSiteById]
 );
 
 /// siteBeingEdited

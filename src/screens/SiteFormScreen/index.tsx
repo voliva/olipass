@@ -1,13 +1,13 @@
 import React from 'react';
-import { Button, View } from 'react-native';
+import { Button, View, Alert } from 'react-native';
 import { NavigationScreenProps } from 'react-navigation';
 import { connect } from 'react-redux';
 import { compose, mapProps } from 'recompose';
 import { headerWithRightElement } from '../../headerWithRightElement';
 import { ApplicationState } from '../../redux';
 import { Unversioned } from '../../redux/globals';
-import { editSite, saveSitePressed } from '../../redux/sites';
-import { editingSiteIsReadyToSave, getSiteBeingEdited } from '../../redux/sites/selectors';
+import { editSite, saveSitePressed, deleteSite } from '../../redux/sites';
+import { editingSiteIsReadyToSave, getSiteBeingEdited, editingSiteCanBeDeleted } from '../../redux/sites/selectors';
 import { Site } from '../../redux/sites/state';
 import { createMapStateToProps } from '../../utils/createMapStateToProps';
 import { Props, SiteFormScreen } from './siteFormScreen.cmp';
@@ -45,10 +45,12 @@ const preserveNavigation = (hoc: (Component: React.ComponentType) => React.Compo
 
 export default compose<Props, NavigationScreenProps>(
     preserveNavigation(
-        connect((state: ApplicationState, props: NavigationScreenProps) => ({
-            site: getSiteBeingEdited(state)
+        connect(createMapStateToProps({
+            site: getSiteBeingEdited,
+            canDelete: editingSiteCanBeDeleted
         }), {
-            setSite: editSite
+            setSite: editSite,
+            onDelete: deleteSite
         })
     ),
     headerWithRightElement(<View style={{marginRight: 10}}>
@@ -61,6 +63,14 @@ export default compose<Props, NavigationScreenProps>(
                 ...props.site,
                 [id]: value
             });
-        }
+        },
+        onDelete: () => Alert.alert(
+            'Delete site',
+            `Are you sure you want to delete ${props.site.name || props.site.website}?`,
+            [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Yes', onPress: () => props.onDelete(props.site.id) },
+            ]
+        )
     }))
 )(SiteFormScreen);
