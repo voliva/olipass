@@ -1,4 +1,4 @@
-import { Normalized, Timing, Unversioned, Versioned } from "../globals";
+import { Normalized, Timing, Unversioned, Versioned, createReversion } from "../globals";
 
 export interface Site extends Timing {
     id: string;
@@ -10,6 +10,8 @@ export interface Site extends Timing {
     notes: Versioned<string>;
     // secrets: Secret[];
 }
+
+export const reversionSite = createReversion({} as Unversioned<Site>, 'username', 'password', 'notes');
 
 export interface SitesState {
     sites: Normalized<Site[]>,

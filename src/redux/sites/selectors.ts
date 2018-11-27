@@ -46,3 +46,8 @@ export const getUnversionedSiteById = createSelector(
     getSiteById,
     site => unversion(site)
 );
+
+export const editingSiteIsReadyToSave = createSelector(
+    getSiteBeingEdited,
+    state => state && !!(state.name.length + state.website.length) && !!state.password.length
+);

@@ -6,13 +6,21 @@ import { compose, mapProps } from 'recompose';
 import { headerWithRightElement } from '../../headerWithRightElement';
 import { ApplicationState } from '../../redux';
 import { Unversioned } from '../../redux/globals';
-import { saveSitePressed, editSite } from '../../redux/sites';
-import { getSiteBeingEdited } from '../../redux/sites/selectors';
+import { editSite, saveSitePressed } from '../../redux/sites';
+import { editingSiteIsReadyToSave, getSiteBeingEdited } from '../../redux/sites/selectors';
 import { Site } from '../../redux/sites/state';
+import { createMapStateToProps } from '../../utils/createMapStateToProps';
 import { Props, SiteFormScreen } from './siteFormScreen.cmp';
+import not from 'ramda/es/not';
+import R_compose from 'ramda/es/compose';
 
 const SaveButton = compose(
-    connect(null, {
+    connect(createMapStateToProps({
+        disabled: R_compose(
+            not,
+            editingSiteIsReadyToSave
+        )
+    }), {
         onPress: saveSitePressed
     }),
     mapProps(props => ({
@@ -21,6 +29,7 @@ const SaveButton = compose(
     }))
 )(Button);
 
+/// HOHOC = Higher order HOC = Higher order higher order component
 const preserveNavigation = (hoc: (Component: React.ComponentType) => React.ComponentType) => (Component: React.ComponentType) => {
     const TransformedComponent = hoc(Component);
     return class extends React.Component {

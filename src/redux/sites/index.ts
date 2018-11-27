@@ -2,13 +2,15 @@ import combineDependantReducers from "combine-dependant-reducers";
 import compose from "ramda/es/compose";
 import rereducer, { payload } from 'rereducer';
 import { createAction } from "../actions";
-import { normalize, unversion, Unversioned } from "../globals";
+import { normalize, unversion, Unversioned, basicsHaveChanged } from "../globals";
 import { SyncAction } from "../sync";
-import { Site, SitesState } from "./state";
+import { Site, SitesState, reversionSite } from "./state";
 import { Options } from "generate-password-browser";
 
 export enum SitesAction {
     SitePressed = 'SitePressed',
+    CreateSitePressed = 'CreateSitePressed',
+    NewSitePrepared = 'NewSitePrepared',
     SiteEdited = 'SiteEdited',
     PswGenOpened = 'PswGenOpened',
     RequestPswRegen = 'RequestPswRegen',
@@ -24,6 +26,8 @@ export const requestPasswordRegen = (options: Options) => createAction(SitesActi
 export const regeneratePassword = (psw: string) => createAction(SitesAction.PswRegenerated, { psw });
 export const acceptGeneratedPassword = () => createAction(SitesAction.GenPswAccepted);
 export const saveSitePressed = () => createAction(SitesAction.SaveSitePressed);
+export const createSitePressed = () => createAction(SitesAction.CreateSitePressed);
+export const sitePrepared = (site: Unversioned<Site>) => createAction(SitesAction.NewSitePrepared, { site });
 
 /// site
 const normalizeSites = (sites: Site[]) => normalize(sites);
@@ -33,12 +37,36 @@ const normalizeSiteDB = compose(
     payload('db', 'sites')
 );
 
+const upsertSite = (state: SitesState['sites'], {args}: { args: [SitesState['siteBeingEdited']] }) => {
+    const newSite = args[0];
+    if(!newSite) return state;
+    const oldSite = state.byId[newSite.id];
+    const now = new Date().getTime(); // Not very pure function.... damn
+
+    const reversionedSite = reversionSite(newSite, now, oldSite);
+    if(!oldSite || basicsHaveChanged(reversionedSite, oldSite)) {
+        reversionedSite.updatedAt = now;
+    }
+
+    return {
+        byId: {
+            ...state.byId,
+            [newSite.id]: reversionedSite
+        },
+        allIds: state.allIds.indexOf(newSite.id) >= 0 ? state.allIds : [
+            ...state.allIds,
+            newSite.id
+        ]
+    }
+}
+
 const sites = rereducer<SitesState['sites'], any>(
     {
         byId: {},
         allIds: []
     },
-    [SyncAction.DBLoaded, normalizeSiteDB]
+    [SyncAction.DBLoaded, normalizeSiteDB],
+    [SitesAction.SaveSitePressed, upsertSite]
 );
 
 /// siteBeingEdited
@@ -49,7 +77,7 @@ const unversionSite = compose(
 
 const updateSitePassword = (
     siteBeingEdited: SitesState['siteBeingEdited'],
-    {args}:any
+    {args}: { args: [SitesState['passwordGenerated']] }
 ): SitesState['siteBeingEdited'] => (siteBeingEdited && args[0]) ? ({
     ...siteBeingEdited,
     password: args[0]
@@ -57,6 +85,7 @@ const updateSitePassword = (
 
 const siteBeingEdited = rereducer<SitesState['siteBeingEdited'], any>(
     null,
+    [SitesAction.NewSitePrepared, payload('site')],
     [SitesAction.SitePressed, unversionSite],
     [SitesAction.SiteEdited, payload('site')],
     [SitesAction.GenPswAccepted, updateSitePassword]
@@ -69,8 +98,8 @@ const passwordGenerated = rereducer<SitesState['passwordGenerated'], any>(
 )
 
 const reducer = combineDependantReducers({
-    sites,
-    siteBeingEdited: [siteBeingEdited, '@next passwordGenerated'],
+    sites: [sites, '@prev siteBeingEdited'],
+    siteBeingEdited: [siteBeingEdited, '@prev passwordGenerated'],
     passwordGenerated
 });
 
