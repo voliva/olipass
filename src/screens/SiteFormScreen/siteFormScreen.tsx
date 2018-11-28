@@ -3,7 +3,7 @@ import { Button, ScrollView } from "react-native";
 import { Unversioned } from "../../redux/globals";
 import { Site } from "../../redux/sites/state";
 import { FieldInput } from "./fieldInput";
-import PasswordGenerator from './passwordGenerator';
+import PasswordField from './passwordField';
 
 export interface Props {
     site: Unversioned<Site>;
@@ -29,7 +29,7 @@ export const SiteFormScreen = (props: Props) => (
             label='Username'
             value={props.site.username}
             onChange={props.onValueChange} />
-        <PasswordGenerator
+        <PasswordField
             id='password'
             label='Password'
             value={props.site.password}

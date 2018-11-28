@@ -5,13 +5,13 @@ import { compose, mapProps, withState } from "recompose";
 import { generatePasswordPressed } from "../../redux/sites";
 import { FieldInput, FieldInputProps } from "./fieldInput";
 
-interface PasswordGeneratorProps extends FieldInputProps {
+interface PasswordFieldProps extends FieldInputProps {
     copy: () => void;
     openGeneratePassword: () => void;
     toggleDisplay: () => void;
 }
 
-const Component = (props: PasswordGeneratorProps) => <View>
+const Component = (props: PasswordFieldProps) => <View>
     <FieldInput {...props} isPassword />
     <View style={styles.buttonGroup}>
         <View style={styles.buttonGroupBtn}>
@@ -32,7 +32,7 @@ const Component = (props: PasswordGeneratorProps) => <View>
     </View>
 </View>
 
-export default compose<PasswordGeneratorProps, FieldInputProps>(
+export default compose<PasswordFieldProps, FieldInputProps>(
     connect(null, {
         openGeneratePassword: generatePasswordPressed
     }),

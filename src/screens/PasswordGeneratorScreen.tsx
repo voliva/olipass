@@ -3,7 +3,7 @@ import React from "react";
 import { Button, Slider, StyleSheet, Switch, Text, View } from "react-native";
 import { connect } from "react-redux";
 import { compose, mapProps, withState } from "recompose";
-import { headerWithRightElement } from "../headerWithRightElement";
+import { headerWithRightComponent } from "../headerWithRightElement";
 import { acceptGeneratedPassword, requestPasswordRegen } from "../redux/sites";
 import { initialPswGenOptions } from "../redux/sites/saga";
 import { getLastPasswordGenerated } from "../redux/sites/selectors";
@@ -84,9 +84,7 @@ const SubmitButton = compose(
 )(Button);
 
 export default compose<PasswordGeneratorProps, {}>(
-    headerWithRightElement(<View style={{marginRight: 10}}>
-        <SubmitButton />
-    </View>),
+    headerWithRightComponent(SubmitButton),
     connect(createMapStateToProps({
         password: getLastPasswordGenerated
     }), {
