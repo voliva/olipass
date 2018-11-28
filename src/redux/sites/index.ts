@@ -1,11 +1,15 @@
 import combineDependantReducers from "combine-dependant-reducers";
-import compose from "ramda/es/compose";
-import rereducer, { payload } from 'rereducer';
-import { createAction } from "../actions";
-import { normalize, unversion, Unversioned, basicsHaveChanged } from "../globals";
-import { SyncAction } from "../sync";
-import { Site, SitesState, reversionSite } from "./state";
 import { Options } from "generate-password-browser";
+import always from "ramda/es/always";
+import compose from "ramda/es/compose";
+import nthArg from "ramda/es/nthArg";
+import path from "ramda/es/path";
+import { combineReducers } from "redux";
+import rereducer, { payload, subReducer } from 'rereducer';
+import { createAction } from "../actions";
+import { basicsHaveChanged, normalize, unversion, Unversioned } from "../globals";
+import { SyncAction } from "../sync";
+import { reversionSite, Site, SitesState } from "./state";
 
 export enum SitesAction {
     SitePressed = 'SitePressed',
@@ -43,10 +47,14 @@ const normalizeSiteDB = compose(
     payload('db', 'sites')
 );
 
-const upsertSite = (state: SitesState['sites'], {args}: { args: [SitesState['siteBeingEdited']] }) => {
+const getSiteIdFromArgs = compose(
+    path(['args', 0, 'id']),
+    nthArg(1)
+) as (...args:any[]) => string;
+
+const upsertSite = (oldSite: Site, {args}: { args: [SitesState['siteBeingEdited']] }) => {
     const newSite = args[0];
-    if(!newSite) return state;
-    const oldSite = state.byId[newSite.id];
+    if(!newSite) return oldSite;
     const now = new Date().getTime(); // Not very pure function.... damn
 
     const reversionedSite = reversionSite(newSite, now, oldSite);
@@ -54,33 +62,50 @@ const upsertSite = (state: SitesState['sites'], {args}: { args: [SitesState['sit
         reversionedSite.updatedAt = now;
     }
 
-    return {
-        byId: {
-            ...state.byId,
-            [newSite.id]: reversionedSite
-        },
-        allIds: state.allIds.indexOf(newSite.id) >= 0 ? state.allIds : [
-            ...state.allIds,
-            newSite.id
-        ]
-    }
+    return reversionedSite;
 }
 
-const deleteSiteById = (state: SitesState['sites'], { payload: { siteId } }: ReturnType<typeof deleteSite>) => {
-    if(!state.byId[siteId]) return state;
+const upsertSiteInArray = (state: string[], {args}: { args: [SitesState['siteBeingEdited']] }) => {
+    const newSite = args[0];
+    if(!newSite) return state;
+
+    return state.indexOf(newSite.id) >= 0 ? state : [
+        ...state,
+        newSite.id
+    ];
+}
+
+const markSiteAsDeleted = (state: Site | null) => {
+    if(!state) return state;
 
     const deletedAt = new Date().getTime();
     return {
-        byId: {
-            ...state.byId,
-            [siteId]: {
-                ...state.byId[siteId],
-                deletedAt
-            }
-        },
-        allIds: state.allIds.filter(id => id !== siteId)
-    }
+        ...state,
+        deletedAt
+    };
 }
+
+const deleteSiteByIdInArray = (state: string[], { payload: { siteId } }: ReturnType<typeof deleteSite>) => {
+    const index = state.indexOf(siteId);
+    if(index < 0) return state;
+
+    return [
+        ...state.slice(0, index),
+        ...state.slice(index + 1)
+    ];
+}
+
+const byId = rereducer<SitesState['sites']['byId'], any>(
+    {},
+    [SitesAction.SaveSitePressed, subReducer(getSiteIdFromArgs, upsertSite)],
+    [SitesAction.DeleteSite, subReducer(payload('siteId'), markSiteAsDeleted)]
+);
+
+const allIds = rereducer<string[], any>(
+    [],
+    [SitesAction.SaveSitePressed, upsertSiteInArray],
+    [SitesAction.DeleteSite, deleteSiteByIdInArray]
+);
 
 const sites = rereducer<SitesState['sites'], any>(
     {
@@ -88,8 +113,10 @@ const sites = rereducer<SitesState['sites'], any>(
         allIds: []
     },
     [SyncAction.DBLoaded, normalizeSiteDB],
-    [SitesAction.SaveSitePressed, upsertSite],
-    [SitesAction.DeleteSite, deleteSiteById]
+    [always(true), combineReducers({
+        byId,
+        allIds
+    })]
 );
 
 /// siteBeingEdited
