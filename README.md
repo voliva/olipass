@@ -1,6 +1,6 @@
 # OliPass
 
-OliPass is a password manager that doesn't depend on any server.
+OliPass is a work-in-progress password manager that doesn't depend on any server.
 
 Instead, it allows you to export/import the encrypted database as a file, so you can keep your devices synchronized or save your own backups somewhere else.
 
@@ -47,6 +47,10 @@ yarn test
 ## Authors
 
 * **Victor Oliva** - *Initial work* - [voliva](https://github.com/voliva)
+
+## Disclaimer
+
+Although this project is actively looking for ways to make it safer, specially as it's dealing with really sensitive data, it's still experimental and not up to the standards yet. This project nor its contributors are responsible for any data loss, leaked or any other damage the usage of this app could have caused.
 
 ## License
 
