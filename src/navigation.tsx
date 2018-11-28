@@ -15,9 +15,9 @@ import {
     SecretListScreen,
     SiteListScreen,
     SplashScreen,
-    SyncScreen
+    SyncScreen,
+    SiteFormScreen
 } from './screens';
-import SecretFormScreen from './screens/SecretFormScreen';
 import PasswordGeneratorScreen from './screens/PasswordGeneratorScreen';
 
 export enum Screen {
@@ -76,7 +76,7 @@ export default createSwitchNavigator({
                 title: 'OliPass'
             }
         },
-        [Screen.SiteForm]: SecretFormScreen,
+        [Screen.SiteForm]: SiteFormScreen,
         [Screen.PasswordGenerator]: PasswordGeneratorScreen
     }),
 }, {
@@ -102,6 +102,12 @@ export async function navigate(screen: Screen, params?: any) {
     );
 }
 
+export async function back() {
+    const navigator = await deferredNavigator.promise;
+    return navigator.dispatch(
+        NavigationActions.back()
+    )
+}
 
 export async function navigateReplace(screen: Screen, params?: any) {
     const navigator = await deferredNavigator.promise;

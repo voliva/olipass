@@ -6,5 +6,6 @@ const branch = (android: string, ios: string) =>
 export const IconSets = {
     Web: branch('md-globe', 'ios-globe'),
     Notes: branch('md-document', 'ios-document'),
-    Sync: branch('md-sync', 'ios-sync')
+    Sync: branch('md-sync', 'ios-sync'),
+    Add: branch('md-add', 'ios-add')
 }

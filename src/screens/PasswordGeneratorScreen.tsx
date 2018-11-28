@@ -1,10 +1,13 @@
+import { Options } from 'generate-password-browser';
 import React from "react";
-import { Button, StyleSheet, Text, View, Slider, Switch } from "react-native";
+import { Button, Slider, StyleSheet, Switch, Text, View } from "react-native";
 import { connect } from "react-redux";
 import { compose, mapProps, withState } from "recompose";
-import { Options, generate } from 'generate-password-browser';
-import { login } from "../redux/auth";
 import { headerWithRightElement } from "../headerWithRightElement";
+import { acceptGeneratedPassword, requestPasswordRegen } from "../redux/sites";
+import { initialPswGenOptions } from "../redux/sites/saga";
+import { getLastPasswordGenerated } from "../redux/sites/selectors";
+import { createMapStateToProps } from "../utils/createMapStateToProps";
 
 interface PasswordGeneratorProps {
     password: string,
@@ -70,29 +73,29 @@ const PasswordGenerator = (props: PasswordGeneratorProps) =>
             onPress={props.onGenerate} />
     </View>;
 
+const SubmitButton = compose(
+    connect(null, {
+        onPress: acceptGeneratedPassword
+    }),
+    mapProps(props => ({
+       ...props,
+       title: 'OK' 
+    }))
+)(Button);
+
 export default compose<PasswordGeneratorProps, {}>(
     headerWithRightElement(<View style={{marginRight: 10}}>
-        <Button title='OK'
-            onPress={() => console.log('ok')} />
+        <SubmitButton />
     </View>),
-    connect(null, {
-        onSubmit: login
+    connect(createMapStateToProps({
+        password: getLastPasswordGenerated
+    }), {
+        requestPasswordRegen
     }),
     withState<Options, Options, 'options', 'setOptions'>(
         'options',
         'setOptions',
-        {
-            length: 8,
-            uppercase: false,
-            numbers: false,
-            symbols: false,
-            strict: true
-        }
-    ),
-    withState(
-        'password',
-        'setPassword',
-        (props: {options: Options}) => generate(props.options)
+        initialPswGenOptions
     ),
     mapProps((props: any) => ({
         ...props,
@@ -105,9 +108,9 @@ export default compose<PasswordGeneratorProps, {}>(
                 [key]: value
             };
             props.setOptions(newOptions);
-            props.setPassword(generate(newOptions));
+            props.requestPasswordRegen(newOptions);
         },
-        onGenerate: () => props.setPassword(generate(props.options))
+        onGenerate: () => props.requestPasswordRegen(props.options)
     }))
 )(PasswordGenerator);
 

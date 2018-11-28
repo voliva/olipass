@@ -1,21 +1,42 @@
 import { Action } from "redux";
 import { fork, put, takeEvery } from "redux-saga/effects";
-import { PasswordsAction } from ".";
-import { navigate, navigateReplace, Screen } from "../../navigation";
-import { dbLoaded } from "../passwords";
-import { PasswordsState } from "../passwords/state";
+import { AuthAction } from ".";
+import { navigate, Screen } from "../../navigation";
+import { dbLoaded } from "../sync";
+import { PasswordDB } from "../sync/state";
 
 function* initSaga() {
     /* TODO Fetch state from local database (realm.io) - If we have database, navigate to register, else navigate to login
     It's not compatible with expo, so I'll just mock it here.
     */
+    yield put(dbLoaded({
+        sites: [{
+            id: 'id',
+            name: 'name',
+            website: 'website',
+            username: {
+                updatedAt: new Date().getTime(),
+                value: 'username'
+            },
+            password: {
+                updatedAt: new Date().getTime(),
+                value: 'password'
+            },
+            notes: {
+                updatedAt: new Date().getTime(),
+                value: 'notes'
+            },
+            updatedAt: new Date().getTime(),
+            deletedAt: null
+        }]
+    }))
     // yield navigateReplace(Screen.Login);
     yield navigate(Screen.SiteList);
 }
 
-const emptyDatabase: PasswordsState = {
+const emptyDatabase: PasswordDB = {
     sites: [],
-    notes: []
+    // notes: []
 }
 function* createDB(action: Action) {
     /* TODO create a new DB and, if successful, navigate to SiteList */
@@ -37,6 +58,6 @@ function* login(action: Action) {
 
 export default function* mySaga(): any {
     yield fork(initSaga);
-    yield takeEvery(PasswordsAction.Register, createDB);
-    yield takeEvery(PasswordsAction.Login, login);
+    yield takeEvery(AuthAction.Register, createDB);
+    yield takeEvery(AuthAction.Login, login);
 }

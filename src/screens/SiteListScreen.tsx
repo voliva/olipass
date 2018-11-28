@@ -1,10 +1,14 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { Text, View, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { SearchBar } from 'react-native-elements';
-import { mapProps, compose, withState } from 'recompose';
+import { connect } from 'react-redux';
+import { compose, mapProps, withState } from 'recompose';
 import { FlatPressList } from '../components';
-import { sitePressed } from '../redux/ui';
+import { sitePressed, createSitePressed } from '../redux/sites';
+import { getAllSites } from '../redux/sites/selectors';
+import { createMapStateToProps } from '../utils/createMapStateToProps';
+import { IconSets } from '../components/iconSets';
+import { Ionicons } from '@expo/vector-icons';
 
 interface Site {
     id: string;
@@ -14,6 +18,7 @@ interface Site {
 interface Props {
     sites: Site[],
     onSitePress: (site: Site) => void,
+    onCreateSite: () => void,
     onChangeText: (txt: string) => void,
     onClearText: () => void
 }
@@ -37,40 +42,30 @@ const SiteListScreen = (props: Props) => (
             keyExtractor={getSiteKey}
             onItemPress={props.onSitePress}
         />
+        <TouchableOpacity onPress={props.onCreateSite} style={styles.fab}>
+            <Ionicons name={IconSets.Add} size={25} />
+        </TouchableOpacity>
     </View>
 );
-
-const sites: Site[] = [
-    'reddit',
-    'gmail',
-    'amazon',
-    'foo',
-    'bar',
-    'lkmreg',
-    'lmkaerg',
-    'aaemrlg',
-    'laergml',
-    'amrlgkmeagr',
-    'aaesmrlg',
-    'laer3gml',
-    'amrlgkmeag1r'
-].map(s => ({
-    id: s,
-    name: s
-}));
 
 const filterSites = (sites: Site[], filterText: string) => filterText.trim().length ? sites.filter(site => {
     return site.name.toLocaleLowerCase().includes(filterText.toLocaleLowerCase());
 }) : sites;
 
 export default compose<Props, {}>(
-    connect(null, {
-        onSitePress: sitePressed,
-    }),
+    connect(
+        createMapStateToProps({
+            sites: getAllSites
+        }),
+        {
+            onSitePress: sitePressed,
+            onCreateSite: createSitePressed
+        }
+    ),
     withState('filterText', 'setFilterText', ''),
     mapProps((props: any) => ({
         ...props,
-        sites: filterSites(sites, props.filterText),
+        sites: filterSites(props.sites, props.filterText),
         onChangeText: (txt: string) => props.setFilterText(txt),
         onClearText: () => props.setFilterText('')
     }))
@@ -87,5 +82,16 @@ const styles = StyleSheet.create({
         borderBottomColor: 'white',
         backgroundColor: '#ddd',
         borderBottomWidth: 1
+    },
+    fab: {
+        position: 'absolute',
+        right: 10,
+        bottom: 10,
+        width: 50,
+        height: 50,
+        borderRadius: 50,
+        backgroundColor: '#aae',
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 });
