@@ -33,7 +33,8 @@
         "node_modules",
         "jest.config.js",
         "babel.config.js",
-        "App.js"
+        "App.js",
+        "index.js",
     ],
     "compileOnSave": false
 }

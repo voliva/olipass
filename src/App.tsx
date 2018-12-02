@@ -17,9 +17,7 @@ export default class extends React.Component {
 
     render = () => (
         <Provider>
-            <KeyboardAvoidingView behavior='padding' style={styles.container}>
-                <App />
-            </KeyboardAvoidingView>
+            <App />
         </Provider>
     );
 }
