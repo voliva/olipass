@@ -27,7 +27,11 @@ function* whenGeneratePasswordPressed(action: Action) {
 }
 
 function* whenRequestPasswordRegen(action: ReturnType<typeof requestPasswordRegen>) {
-    yield put(regeneratePassword(generate(action.payload.options)));
+    try {
+        yield put(regeneratePassword(generate(action.payload.options)));
+    } catch (ex) {
+        console.log(ex);
+    }
 }
 
 export const initialPswGenOptions: Options = {
@@ -38,7 +42,11 @@ export const initialPswGenOptions: Options = {
     strict: true
 }
 function* whenOpenPasswordGenerator() {
-    yield put(regeneratePassword(generate(initialPswGenOptions)));
+    try {
+        yield put(regeneratePassword(generate(initialPswGenOptions)));
+    } catch (ex) {
+        console.log(ex);
+    }
 }
 
 function* goBack() {

@@ -35,6 +35,7 @@
         "babel.config.js",
         "App.js",
         "index.js",
+        "shim.js"
     ],
     "compileOnSave": false
 }
