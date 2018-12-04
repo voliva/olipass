@@ -1,33 +1,29 @@
 {
-  "name": "my-new-project",
-  "main": "node_modules/expo/AppEntry.js",
+  "name": "OliPass",
   "private": true,
   "scripts": {
     "watch": "rimraf build && tsc -w",
-    "start": "concurrently \"yarn run watch\" \"expo start\"",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
-    "eject": "expo eject",
+    "build": "rimraf build && tsc",
+    "start": "concurrently \"yarn run watch\" \"react-native start\"",
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
     "test": "node ./node_modules/jest/bin/jest.js --watchAll",
     "postinstall": "patch-package"
   },
   "jest": {
-    "preset": "jest-expo"
+    "preset": "react-native"
   },
   "dependencies": {
-    "@expo/samples": "2.1.1",
-    "@types/expo__vector-icons": "^6.2.3",
     "@types/react-native-elements": "^0.18.0",
     "buffer": "^5.2.1",
     "combine-dependant-reducers": "^3.0.0",
     "cryptojslib": "^3.1.2",
-    "expo": "^31.0.2",
     "generate-password-browser": "^1.0.3",
     "pako": "^1.0.6",
     "ramda": "^0.25.0",
     "re-reselect": "^2.2.0",
-    "react": "16.5.2",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.0.tar.gz",
+    "react": "16.6.1",
+    "react-native": "0.57.7",
     "react-native-elements": "^0.19.1",
     "react-navigation": "^2.18.2",
     "react-redux": "^5.1.1",
@@ -39,11 +35,10 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@types/expo": "^30.0.0",
     "@types/jest": "^23.3.9",
     "@types/pako": "^1.0.0",
     "@types/ramda": "^0.25.41",
-    "@types/react": "16.4.18",
+    "@types/react": "16.7.12",
     "@types/react-native": "^0.57.7",
     "@types/react-navigation": "^2.13.1",
     "@types/react-redux": "6.0.9",
@@ -53,15 +48,14 @@
     "@types/redux": "3.6.31",
     "@types/reselect": "^2.2.0",
     "@types/uuid": "^3.4.4",
-    "babel-preset-expo": "^5.0.0",
     "concurrently": "^4.0.1",
-    "jest-expo": "^31.0.0",
+    "jest": "23.6.0",
     "patch-package": "^5.1.1",
     "postinstall-postinstall": "^2.0.0",
     "rimraf": "^2.6.2",
     "schedule": "0.4.0",
     "ts-jest": "^23.10.4",
     "tslint": "^5.11.0",
-    "typescript": "^3.1.6"
+    "typescript": "^3.2.1"
   }
 }

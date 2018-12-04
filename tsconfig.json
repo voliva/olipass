@@ -29,11 +29,12 @@
       "react-native"
     ],
     "exclude":[
-        "build", 
+        "build",
+        "android",
+        "ios",
         "node_modules",
         "jest.config.js",
-        "babel.config.js",
-        "App.js"
+        "index.js"
     ],
     "compileOnSave": false
 }

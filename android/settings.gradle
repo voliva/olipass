@@ -1,0 +1,3 @@
+rootProject.name = 'OliPass'
+
+include ':app'
