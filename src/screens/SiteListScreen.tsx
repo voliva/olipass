@@ -1,14 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { SearchBar } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { compose, mapProps, withState } from 'recompose';
 import { FlatPressList } from '../components';
 import { sitePressed, createSitePressed } from '../redux/sites';
 import { getAllSites } from '../redux/sites/selectors';
 import { createMapStateToProps } from '../utils/createMapStateToProps';
-import { IconSets } from '../components/iconSets';
-import { Ionicons } from '@expo/vector-icons';
+import Icon from 'react-native-ionicons';
 
 interface Site {
     id: string;
@@ -32,10 +30,6 @@ const getSiteKey = (site: Site) => site.id;
 
 const SiteListScreen = (props: Props) => (
     <View style={{flex: 1}}>
-        <SearchBar
-            onChangeText={props.onChangeText}
-            onClearText={props.onClearText}
-            placeholder='Type Here...' />
         <FlatPressList
             data={props.sites}
             renderItem={SiteRenderer}
@@ -43,7 +37,7 @@ const SiteListScreen = (props: Props) => (
             onItemPress={props.onSitePress}
         />
         <TouchableOpacity onPress={props.onCreateSite} style={styles.fab}>
-            <Ionicons name={IconSets.Add} size={25} />
+            <Icon name='add' />
         </TouchableOpacity>
     </View>
 );

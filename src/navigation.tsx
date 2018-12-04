@@ -6,7 +6,6 @@ import {
     NavigationContainerComponent,
     StackActions
 } from 'react-navigation';
-import { IconSets } from './components/iconSets';
 import tabBarIcon from './components/tabBarIcon';
 import { deferPromise } from './deferPromise';
 import {
@@ -54,21 +53,21 @@ export default createSwitchNavigator({
                     screen: SiteListScreen,
                     navigationOptions: {
                         title: 'Sites',
-                        tabBarIcon: tabBarIcon(IconSets.Web)
+                        tabBarIcon: tabBarIcon('globe')
                     }
                 },
                 [Screen.SecretList]: {
                     screen: SecretListScreen,
                     navigationOptions: {
                         title: 'Secrets',
-                        tabBarIcon: tabBarIcon(IconSets.Notes)
+                        tabBarIcon: tabBarIcon('document')
                     }
                 },
                 [Screen.Sync]: {
                     screen: SyncScreen,
                     navigationOptions: {
                         title: 'Sync',
-                        tabBarIcon: tabBarIcon(IconSets.Sync)
+                        tabBarIcon: tabBarIcon('sync')
                     }
                 },
             }),

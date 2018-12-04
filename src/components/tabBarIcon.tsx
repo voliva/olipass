@@ -1,5 +1,5 @@
 import React from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import Icon from 'react-native-ionicons';
 
 import Colors from '../constants/Colors';
 
@@ -8,9 +8,8 @@ interface Props {
 }
 
 export default (icon: string) => ({focused}: Props) =>
-    <Ionicons
+    <Icon
         name={icon}
         size={26}
-        style={{ marginBottom: -3 }}
         color={focused ? Colors.tabIconSelected : Colors.tabIconDefault}
     />
