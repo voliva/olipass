@@ -1,5 +1,5 @@
 {
-  "name": "OliPass",
+  "name": "olipass",
   "private": true,
   "scripts": {
     "watch": "rimraf build && tsc -w",
