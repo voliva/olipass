@@ -34,7 +34,8 @@
         "ios",
         "node_modules",
         "jest.config.js",
-        "index.js"
+        "index.js",
+        "shim.js"
     ],
     "compileOnSave": false
 }
