@@ -14,6 +14,7 @@
     "preset": "react-native"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.2.5",
     "buffer": "^5.2.1",
     "combine-dependant-reducers": "^3.0.0",
     "core-js": "^2.5.7",

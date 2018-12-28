@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { NavigationStackScreenOptions } from "react-navigation";
 
-export const headerWithRightComponent = (HeaderComponent: React.ReactType<{}>) => <T extends any>(Component: React.ReactType<T>) =>
+export const headerWithRightComponent = (HeaderComponent: React.ComponentType<{}>) => <T extends any>(Component: React.ComponentType<T>) =>
     class extends React.Component<T> {
         static navigationOptions: NavigationStackScreenOptions = {
             ...((Component as any).navigationOptions),
