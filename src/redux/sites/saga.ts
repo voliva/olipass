@@ -1,12 +1,12 @@
 import { generate, Options } from "generate-password-browser";
 import { Action } from "redux";
-import { put, takeEvery } from "redux-saga/effects";
+import { put, takeEvery, call } from "redux-saga/effects";
 import { navigate, Screen, back } from "../../navigation";
 import { regeneratePassword, SitesAction, requestPasswordRegen, generatePasswordPressed, sitePrepared } from "./";
 import uuid from 'uuid/v4'
 
 function* whenSitePressed() {
-    yield navigate(Screen.SiteForm);
+    yield call(navigate, Screen.SiteForm);
 }
 function* whenCreateSitePressed() {
     yield put(sitePrepared({
@@ -19,11 +19,11 @@ function* whenCreateSitePressed() {
         username: '',
         website: ''
     }));
-    yield navigate(Screen.SiteForm);
+    yield call(navigate, Screen.SiteForm);
 }
 
 function* whenGeneratePasswordPressed(action: Action) {
-    yield navigate(Screen.PasswordGenerator);
+    yield call(navigate, Screen.PasswordGenerator);
 }
 
 function* whenRequestPasswordRegen(action: ReturnType<typeof requestPasswordRegen>) {
@@ -42,7 +42,7 @@ function* whenOpenPasswordGenerator() {
 }
 
 function* goBack() {
-    yield back();
+    yield call(back);
 }
 
 export default function* mySaga(): any {

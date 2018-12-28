@@ -1,5 +1,5 @@
 import { Action } from "redux";
-import { fork, put, takeEvery } from "redux-saga/effects";
+import { fork, put, takeEvery, call } from "redux-saga/effects";
 import { AuthAction } from ".";
 import { navigate, Screen } from "../../navigation";
 import { dbLoaded } from "../sync";
@@ -30,8 +30,8 @@ function* initSaga() {
             deletedAt: null
         }]
     }))
-    // yield navigateReplace(Screen.Login);
-    yield navigate(Screen.SiteList);
+    // yield call(navigateReplace, Screen.Login);
+    yield call(navigate, Screen.SiteList);
 }
 
 const emptyDatabase: PasswordDB = {
@@ -41,14 +41,14 @@ const emptyDatabase: PasswordDB = {
 function* createDB(action: Action) {
     /* TODO create a new DB and, if successful, navigate to SiteList */
     yield put(dbLoaded(emptyDatabase));
-    yield navigate(Screen.SiteList);
+    yield call(navigate, Screen.SiteList);
 }
 
 function* login(action: Action) {
     /* TODO try to decrypt the database with the password, if successful, navigate to SiteList */
 
     yield put(dbLoaded(emptyDatabase));
-    yield navigate(Screen.SiteList);
+    yield call(navigate, Screen.SiteList);
 
     // We can actually use react-native-simple-toast when we unlink expo, and basically use as a side effect, without emiting an extra redux action
     // yield put(loginFailed());
