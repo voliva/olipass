@@ -10,6 +10,11 @@
     "test": "node ./node_modules/jest/bin/jest.js --watchAll",
     "postinstall": "patch-package && rn-nodeify --yarn --hack"
   },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts/"
+    ]
+  },
   "jest": {
     "preset": "react-native"
   },
