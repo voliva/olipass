@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     sliderValue: {
-        fontFamily: 'monospace' // TODO Courier for iOS
+        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace'
     },
     slider: {
         paddingLeft: 10,
