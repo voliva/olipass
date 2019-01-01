@@ -1,6 +1,6 @@
 import { Options } from 'generate-password-browser';
 import React from "react";
-import { Button, Slider, StyleSheet, Switch, Text, View } from "react-native";
+import { Button, Slider, StyleSheet, Switch, Text, View, Platform } from "react-native";
 import { connect } from "react-redux";
 import { compose, mapProps, withState } from "recompose";
 import { headerWithRightComponent } from "../headerWithRightElement";
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     },
     password: {
         fontSize: 18,
-        fontFamily: 'share-tech-mono'
+        fontFamily: Platform.OS === 'ios' ? 'Share Tech Mono' : 'ShareTechMono-Regular'
     },
     sliderContainer: {
         padding: 10,

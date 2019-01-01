@@ -1,4 +1,4 @@
-import { StyleSheet, TextInput, TextInputProps, RegisteredStyle } from "react-native";
+import { StyleSheet, TextInput, TextInputProps, RegisteredStyle, Platform } from "react-native";
 import { mapProps } from "recompose";
 import { Unversioned } from "../../redux/globals";
 import { Site } from "../../redux/sites/state";
@@ -45,6 +45,6 @@ const styles = StyleSheet.create({
         flex: 1
     },
     passwordInput: {
-        fontFamily: 'share-tech-mono'
+        fontFamily: Platform.OS === 'ios' ? 'Share Tech Mono' : 'ShareTechMono-Regular'
     }
 });
