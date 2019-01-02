@@ -13,7 +13,7 @@ interface RegisterFormProps {
 }
 
 const isValidPassword = (password: string) =>
-    password.trim().length > 8;
+    password.trim().length > 3; // Changed from 8 for easy development
 const isEnabled = (props: RegisterFormProps) =>
     isValidPassword(props.password) &&
     props.password === props.repeat

@@ -1,5 +1,4 @@
 import React from 'react';
-import { KeyboardAvoidingView, StyleSheet } from 'react-native';
 import { NavigationContainerComponent } from 'react-navigation';
 import AppNavigator, { setTopLevelNavigator } from './navigation';
 import { Provider } from './redux';
@@ -20,9 +19,3 @@ export default class extends React.Component {
         </Provider>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    }
-});
