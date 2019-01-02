@@ -5,4 +5,4 @@ export enum SyncAction {
     DBLoaded = 'DBLoaded'
 }
 
-export const dbLoaded = (db: PasswordDB | null) => createAction(SyncAction.DBLoaded, {db});
+export const dbLoaded = (db: PasswordDB | null, password: string) => createAction(SyncAction.DBLoaded, {db, password});

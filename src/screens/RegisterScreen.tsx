@@ -36,13 +36,13 @@ const RegisterForm = (props: RegisterFormProps) =>
             <TextInput
                 placeholder='Password'
                 value={props.password}
-                onChangeText={props.onPasswordChange} 
+                onChangeText={props.onPasswordChange}
                 style={getPasswordStyle(props)}
                 secureTextEntry />
             <TextInput
                 placeholder='Repeat password'
                 value={props.repeat}
-                onChangeText={props.onRepeatChange} 
+                onChangeText={props.onRepeatChange}
                 style={getRepeatStyle(props)}
                 secureTextEntry />
         </View>

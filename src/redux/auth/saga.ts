@@ -6,6 +6,8 @@ import { navigate, navigateReplace, Screen } from "../../navigation";
 import { ActionWithPayload } from "../actions";
 import { dbLoaded } from "../sync";
 import { PasswordDB } from "../sync/state";
+import { mapModelToSite } from "../../encryptedDB/schema";
+import { Site } from "../sites/state";
 
 function* initSaga() {
     const dbExists = yield call(encryptedDbExsits);
@@ -55,21 +57,35 @@ function* createDB(action: ActionWithPayload) {
         return;
     }
 
-    const realm = yield call(openDatabase, action.payload.password);
+    const { password } = action.payload;
+
+    // Create database
+    const realm = yield call(openDatabase, password);
     realm.close();
 
-    /* TODO create a new DB and, if successful, navigate to SiteList */
-    yield put(dbLoaded(emptyDatabase));
+    yield put(dbLoaded(emptyDatabase, password));
     yield call(navigate, Screen.SiteList);
 }
 
 function* login(action: ActionWithPayload) {
-    const passwordWorked = yield call(tryPassword, action.payload.password);
+    const { password } = action.payload;
+    const passwordWorked = yield call(tryPassword, password);
 
     if(passwordWorked) {
-        // TODO decrypt database to local store.
-        yield put(dbLoaded(emptyDatabase));
-        yield call(navigate, Screen.SiteList);
+        const realm: Realm = yield call(openDatabase, password);
+        try {
+            const siteModels: Realm.Results<any> = yield call([realm, realm.objects], 'Site');
+            const sites: Site[] = yield call([siteModels, siteModels.map], mapModelToSite);
+
+            yield put(dbLoaded({
+                sites
+            }, password));
+            yield call(navigate, Screen.SiteList);
+        } catch(ex) {
+            console.error(ex);
+        } finally {
+            realm.close();
+        }
     }else {
         // We can actually use react-native-simple-toast when we unlink expo, and basically use as a side effect, without emiting an extra redux action
         yield put(loginFailed());

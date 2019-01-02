@@ -1,13 +1,7 @@
 import Realm from 'realm';
+import schema from './schema';
 
 declare var CryptoJS: any;
-
-const schema = [{
-    name: 'Dog',
-    properties: {
-        name: 'string'
-    }
-}]
 
 export async function encryptedDbExsits() {
     const unencryptedConfig = {
@@ -27,18 +21,9 @@ export async function encryptedDbExsits() {
     }
 }
 
-let workingEncryptionKey: Int32Array | null = null;
 export async function tryPassword(password: string) {
-    const passwordHash = CryptoJS.EvpKDF(password, '', { keySize: 16 });
-    const encryptionKey = new Int32Array(passwordHash.words);
-    
     try {
-        const realm = await Realm.open({
-            schema,
-            encryptionKey
-        });
-
-        workingEncryptionKey = encryptionKey;
+        const realm = await openDatabase(password);
         realm.close();
 
         return true;
