@@ -13,7 +13,7 @@ interface RegisterFormProps {
 }
 
 const isValidPassword = (password: string) =>
-    password.trim().length > 8;
+    password.trim().length > 3; // Changed from 8 for easy development
 const isEnabled = (props: RegisterFormProps) =>
     isValidPassword(props.password) &&
     props.password === props.repeat
@@ -36,13 +36,13 @@ const RegisterForm = (props: RegisterFormProps) =>
             <TextInput
                 placeholder='Password'
                 value={props.password}
-                onChangeText={props.onPasswordChange} 
+                onChangeText={props.onPasswordChange}
                 style={getPasswordStyle(props)}
                 secureTextEntry />
             <TextInput
                 placeholder='Repeat password'
                 value={props.repeat}
-                onChangeText={props.onRepeatChange} 
+                onChangeText={props.onRepeatChange}
                 style={getRepeatStyle(props)}
                 secureTextEntry />
         </View>

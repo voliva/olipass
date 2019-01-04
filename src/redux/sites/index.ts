@@ -81,7 +81,20 @@ const markSiteAsDeleted = (state: Site | null) => {
     const deletedAt = new Date().getTime();
     return {
         ...state,
-        deletedAt
+        deletedAt,
+        website: '',
+        username: {
+            updatedAt: deletedAt,
+            value: ''
+        },
+        password: {
+            updatedAt: deletedAt,
+            value: ''
+        },
+        notes: {
+            updatedAt: deletedAt,
+            value: ''
+        }
     };
 }
 
