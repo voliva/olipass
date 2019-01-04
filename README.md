@@ -6,13 +6,11 @@ Instead, it allows you to export/import the encrypted database as a file, so you
 
 ## Getting Started
 
-At the current state, this project is based on [expo-cli](https://github.com/expo/expo-cli) (previously known as create-react-native-app).
-
-It may get ejected soon when we start adding native modules.
+This project is a React Native app, mainly targeted for Android, written in Typescript.
 
 ### Prerequisites
 
-You'll need expo-cli installed with its dependencies.
+You'll need react-native installed with its dependencies to build native projects (without expo).
 
 The following steps will be using yarn, but you can use npm as well.
 
@@ -24,13 +22,27 @@ Install dependencies
 yarn
 ```
 
-Start typescript compiler + expo packager
+Start typescript compiler - This will keep watching for changes in `src/` and output JS to `build/`
 
 ```
 yarn start
 ```
 
+Start react-native packager
+
+```
+yarn packager
+```
+
+Then run it on your device
+
+```
+yarn android
+```
+
 ## Running the tests
+
+TBD
 
 ```
 yarn test
@@ -41,12 +53,19 @@ yarn test
 * [Redux](https://redux.js.org/) - The state manager.
 * [Redux-Saga](https://redux-saga.js.org/) - The side effects orchestrator.
 * [React Native](https://facebook.github.io/react-native/) - The app container.
-* [Realm Database](https://realm.io/products/realm-database) - (WIP Planning to use this one) Database to store encrypted data.
+* [Realm Database](https://realm.io/products/realm-database) - Database to store encrypted data.
 * [CryptoJS](https://code.google.com/p/crypto-js/) - Encryption library for imports/exports.
 
 ## Authors
 
 * **Victor Oliva** - *Initial work* - [voliva](https://github.com/voliva)
+
+## Planned upgrades
+- [ ] Add support for fingerprint login
+- [ ] Synchronize via GDrive or similar
+- [ ] Improve visuals
+- [ ] Improve iOS support
+- [ ] Desktop version
 
 ## Disclaimer
 
@@ -55,3 +74,5 @@ Although this project is actively looking for ways to make it safer, specially a
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+We kindly ask to credit the original authors of this project when publishing any derivative work.
