@@ -1,0 +1,36 @@
+patch-package
+--- a/node_modules/react-native-fs/FS.common.js
++++ b/node_modules/react-native-fs/FS.common.js
+@@ -576,6 +576,7 @@ var RNFS = {
+   MainBundlePath: RNFSManager.RNFSMainBundlePath,
+   CachesDirectoryPath: RNFSManager.RNFSCachesDirectoryPath,
+   ExternalCachesDirectoryPath: RNFSManager.RNFSExternalCachesDirectoryPath,
++  DownloadsDirectoryPath: RNFSManager.RNFSDownloadsDirectoryPath,
+   DocumentDirectoryPath: RNFSManager.RNFSDocumentDirectoryPath,
+   ExternalDirectoryPath: RNFSManager.RNFSExternalDirectoryPath,
+   ExternalStorageDirectoryPath: RNFSManager.RNFSExternalStorageDirectoryPath,
+--- a/node_modules/react-native-fs/android/src/main/java/com/rnfs/RNFSManager.java
++++ b/node_modules/react-native-fs/android/src/main/java/com/rnfs/RNFSManager.java
+@@ -43,6 +43,7 @@ import java.util.Map;
+ public class RNFSManager extends ReactContextBaseJavaModule {
+ 
+   private static final String RNFSDocumentDirectoryPath = "RNFSDocumentDirectoryPath";
++  private static final String RNFSDownloadsDirectoryPath = "RNFSDownloadsDirectoryPath";
+   private static final String RNFSExternalDirectoryPath = "RNFSExternalDirectoryPath";
+   private static final String RNFSExternalStorageDirectoryPath = "RNFSExternalStorageDirectoryPath";
+   private static final String RNFSPicturesDirectoryPath = "RNFSPicturesDirectoryPath";
+@@ -886,6 +887,7 @@ public class RNFSManager extends ReactContextBaseJavaModule {
+ 
+     constants.put(RNFSDocumentDirectory, 0);
+     constants.put(RNFSDocumentDirectoryPath, this.getReactApplicationContext().getFilesDir().getAbsolutePath());
++    constants.put(RNFSDownloadsDirectoryPath, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
+     constants.put(RNFSTemporaryDirectoryPath, this.getReactApplicationContext().getCacheDir().getAbsolutePath());
+     constants.put(RNFSPicturesDirectoryPath, Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).getAbsolutePath());
+     constants.put(RNFSCachesDirectoryPath, this.getReactApplicationContext().getCacheDir().getAbsolutePath());
+--- a/node_modules/react-native-fs/index.d.ts
++++ b/node_modules/react-native-fs/index.d.ts
+@@ -256,3 +256,4 @@ export const TemporaryDirectoryPath: string
+ export const LibraryDirectoryPath: string
+ export const PicturesDirectoryPath: string
+ export const FileProtectionKeys: string
++export const DownloadsDirectoryPath: string
