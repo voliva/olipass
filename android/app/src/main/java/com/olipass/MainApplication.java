@@ -3,6 +3,7 @@ package com.olipass;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativedocumentpicker.ReactNativeDocumentPicker;
 import io.realm.react.RealmReactPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.facebook.react.ReactNativeHost;
@@ -25,6 +26,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ReactNativeDocumentPicker(),
             new RealmReactPackage(),
             new RandomBytesPackage()
       );
