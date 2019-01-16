@@ -20,19 +20,19 @@ export const getLastPasswordGenerated = createSelector(
     state => state.passwordGenerated
 );
 
-const getAllSitesAndDeleted = createSelector(
+export const getAllSitesIncludingDeleted = createSelector(
     getSitesState, getAllSiteIds,
     (state, siteIds) => siteIds
         .map(id => state.sites.byId[id])
 );
 
 export const getAllSites = createSelector(
-    getAllSitesAndDeleted,
+    getAllSitesIncludingDeleted,
     sites => sites.filter(site => !site.deletedAt)
 );
 
 export const getAllDeletedSites = createSelector(
-    getAllSitesAndDeleted,
+    getAllSitesIncludingDeleted,
     sites => sites.filter(site => !!site.deletedAt)
 );
 

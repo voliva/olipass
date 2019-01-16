@@ -889,6 +889,11 @@
     Base64 "~0.2.0"
     inherits "~2.0.1"
 
+"@types/dateformat@^3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@types/dateformat/-/dateformat-3.0.0.tgz#d3cbfa8ac3789990592f3d9585331cdb2c5f979f"
+  integrity sha512-4N/J/ISasvUYOPnr5gfYRp+YYmPhHqkAyUgP9T9/HQHFoIfjU53lt3jaX67VuTvhpF5WsyNlCcEFbpI3spdxEA==
+
 "@types/history@*":
   version "4.7.2"
   resolved "https://registry.yarnpkg.com/@types/history/-/history-4.7.2.tgz#0e670ea254d559241b6eeb3894f8754991e73220"
@@ -917,13 +922,6 @@
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@types/react-native-document-picker/-/react-native-document-picker-2.0.0.tgz#8ecb47e9eb609ada9e13a8fcb42e4c20e1f5c613"
   integrity sha512-CCN9tVX7Hgjp8NQ81eH3PT7SIhNPnwY78eP4zTer7Bz+oLGRZBb+w8A68tQKzLGC72gMA3r+fzK9DGa/9+E8JQ==
-
-"@types/react-native-fs@^2.8.2":
-  version "2.8.2"
-  resolved "https://registry.yarnpkg.com/@types/react-native-fs/-/react-native-fs-2.8.2.tgz#c5c466ea898d433aa9b3a8fc06ee56392ae49e06"
-  integrity sha512-mk4yiUCEQl8dvoK4jqahoUK9P5e5jV9r/4mcG4DLUt9bItdE67M0j0AkezUg8Fe4C22/5/ODN5wROpLCxyz6vw==
-  dependencies:
-    "@types/react-native" "*"
 
 "@types/react-native@*", "@types/react-native@^0.57.7":
   version "0.57.7"
@@ -2191,6 +2189,11 @@ date-now@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
   integrity sha1-6vQ5/U1ISK105cx9vvIAZyueNFs=
+
+dateformat@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-3.0.3.tgz#a6e37499a4d9a9cf85ef5872044d62901c9889ae"
+  integrity sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==
 
 debug@2.6.9, debug@^2.1.2, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8, debug@^2.6.9:
   version "2.6.9"
@@ -5495,6 +5498,11 @@ react-native-crypto@^2.1.2:
     inherits "^2.0.1"
     pbkdf2 "3.0.8"
     public-encrypt "^4.0.0"
+
+react-native-dialog-input@1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/react-native-dialog-input/-/react-native-dialog-input-1.0.6.tgz#9ec10cea569f860234f292775639d80d1a17db7f"
+  integrity sha512-BUFFgALMr1fHdOo4J+3hs+h/u4eyo+zoG1KmLAOA4XYL5pWt762NFFcQ34aS3GM7w8uPfbE8ScIaYJVaOehA6g==
 
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
