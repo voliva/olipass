@@ -1,0 +1,11 @@
+patch-package
+--- a/node_modules/react-native-dialog-input/index.js
++++ b/node_modules/react-native-dialog-input/index.js
+@@ -52,6 +52,7 @@ class DialogInput extends React.Component{
+                   placeholder={hintInput}
+                   onChangeText={(inputModal) => this.setState({inputModal})}
+                   value={value}
++                  secureTextEntry
+                   />
+               </View>
+               <View style={styles.btn_container}>
