@@ -9,6 +9,10 @@ import { PermissionsAndroid } from "react-native";
 import * as RNFS from 'react-native-fs';
 import dateFormat from 'dateformat';
 import { Action } from "redux";
+import { Site } from "../sites/state";
+import { fromStoreToSync } from "./syncFormat";
+
+import Toast from 'react-native-simple-toast';
 
 declare var CryptoJS: any;
 
@@ -44,25 +48,19 @@ function* exportDB(password: string) {
     try {        
         yield call(requestStoragePermission);
 
-        const sites = yield select(getAllSitesIncludingDeleted);
-        const notes: never[] = [];
+        const sites: Site[] = yield select(getAllSitesIncludingDeleted);
 
-        const sowDB = {
-            sites,
-            notes
-        };
-
+        const syncState = fromStoreToSync(sites);
         const file = yield call(generateFilename);
 
-        console.log('db to encrypt', sowDB, file);
-        const payload = encryptDB(sowDB, password);
-        console.log(payload);
+        const payload = encryptDB(syncState, password);
 
         yield call([RNFS, RNFS.writeFile], file, payload, 'base64');
 
-        console.log('complete :D');
+        yield call([Toast, Toast.show], 'Exported to downloads folder');
     } catch (ex) {
         console.log(ex);
+        yield call([Toast, Toast.show], 'Couldn\'t export... WIP!');
     }
 }
 
@@ -82,15 +80,10 @@ function pickFile() {
 function *importDB(password: string) {
     try {
         const pickedFile: Result = yield call(pickFile);
-
-        console.log('file to read', pickedFile);
-
         const fileContent = yield call([RNFS, RNFS.readFile], pickedFile.uri, 'base64');
 
-        console.log('read! :D', fileContent);
-
         try {
-            const decryptedDB = decryptDatabase(fileContent, password + '#');
+            const decryptedDB = decryptDatabase(fileContent, password);
 
             console.log('decrypted! :D', decryptedDB);
         } catch (ex) {
@@ -105,6 +98,7 @@ function *importDB(password: string) {
         }
     } catch (ex) {
         console.log(ex);
+        yield call([Toast, Toast.show], 'Couldn\'t import - Wrong format or password');
     }
 }
 
