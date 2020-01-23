@@ -4,7 +4,7 @@ import {
   filterAction
 } from "@voliva/react-observable";
 import { merge } from "rxjs";
-import { ignoreElements, map, tap } from "rxjs/operators";
+import { ignoreElements, map, tap, switchMap } from "rxjs/operators";
 import { getScreenRoutePath, history, Screen } from "src/router";
 import { DB, loadDB, upsertDB } from "src/services/encryptedDB";
 
@@ -23,10 +23,12 @@ export const [getPassword, authStore] = createStore(
   (state, action) =>
     authSuccess.isCreatorOf(action) ? action.payload.password : state,
   action$ => {
-    if (localStorage.getItem(lsKey)) {
-      history.replace(getScreenRoutePath(Screen.Login));
-    } else {
-      history.replace(getScreenRoutePath(Screen.Register));
+    if (history.location.pathname === "/") {
+      if (localStorage.getItem(lsKey)) {
+        history.replace(getScreenRoutePath(Screen.Login));
+      } else {
+        history.replace(getScreenRoutePath(Screen.Register));
+      }
     }
 
     const login$ = action$.pipe(
@@ -63,6 +65,7 @@ export const [getPassword, authStore] = createStore(
 
     const success$ = action$.pipe(
       filterAction(authSuccess),
+      // switchMap(() => import("../Main")), // Preload the screen we want to show while the user thinks it's logging in
       tap(() => history.replace(getScreenRoutePath(Screen.Main))),
       ignoreElements()
     );

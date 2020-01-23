@@ -1,37 +1,12 @@
-import {
-  useAction,
-  Action,
-  ActionCreator,
-  useReactObservable,
-  filterAction
-} from "@voliva/react-observable";
+import { useAction, useDispatchedAction } from "@voliva/react-observable";
 import { Field, Form, Formik } from "formik";
-import React, { useRef, useEffect, useState } from "react";
+import { motion, useAnimation } from "framer-motion";
+import React, { useRef } from "react";
 import { useHistory } from "react-router";
 import { Header, Panel } from "src/components/Page";
 import { getScreenRoutePath, Screen } from "src/router";
+import styled from "styled-components";
 import { authError, authLogin } from "./auth";
-import { take } from "rxjs/operators";
-import styled, { keyframes, css } from "styled-components";
-import { useAnimation, motion } from "framer-motion";
-
-export const useDispatchedAction = <TAction extends Action>(
-  actionCreator: ActionCreator<any, TAction>,
-  handler?: (action: TAction) => void
-): (() => Promise<TAction>) => {
-  const { action$ } = useReactObservable();
-
-  useEffect(() => {
-    if (!handler) return;
-
-    const subscription = action$
-      .pipe(filterAction(actionCreator))
-      .subscribe(handler);
-    return () => subscription.unsubscribe();
-  }, [actionCreator, handler]);
-
-  return () => action$.pipe(take(1), filterAction(actionCreator)).toPromise();
-};
 
 export const Login = () => {
   const dispatchLogin = useAction(authLogin);
@@ -51,7 +26,7 @@ export const Login = () => {
     }
   });
 
-  const reset = () => {
+  const reset = async () => {
     history.push(getScreenRoutePath(Screen.Register));
   };
 

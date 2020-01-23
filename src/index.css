@@ -12,7 +12,8 @@ code {
     monospace;
 }
 
-input {
+input,
+textarea {
   display: block;
   box-sizing: border-box;
   width: 100%;
@@ -21,4 +22,5 @@ input {
   padding: 0.5em;
   outline: none;
   margin-bottom: 0.5em;
+  resize: vertical;
 }

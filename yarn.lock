@@ -1505,6 +1505,11 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.3.tgz#bdfd69d61e464dcc81b25159c270d75a73c1a636"
   integrity sha512-Il2DtDVRGDcqjDtE+rF8iqg1CArehSK84HZJCT7AMITlyXRBpuPhqGLDQMowraqqu1coEaimg4ZOqggt6L6L+A==
 
+"@types/lodash@^4.14.149":
+  version "4.14.149"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.149.tgz#1342d63d948c6062838fbf961012f74d4e638440"
+  integrity sha512-ijGqzZt/b7BfzcK9vTrS6MFljQRPn5BFWOx8oE0GYxribu6uV+aA9zZuXI1zc/etK9E8nrgdoF2+LgUw7+9tJQ==
+
 "@types/minimatch@*":
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-3.0.3.tgz#3dca0e3f33b200fc7d1139c0cd96c1268cadfd9d"
@@ -1664,10 +1669,10 @@
     semver "^6.3.0"
     tsutils "^3.17.1"
 
-"@voliva/react-observable@^1.0.0-a3":
-  version "1.0.0-a3"
-  resolved "http://localhost:4873/@voliva%2freact-observable/-/react-observable-1.0.0-a3.tgz#23c818b03701e3c32a7a58772e533cf8471bda2d"
-  integrity sha512-tMfbJlrOFA+2SpkQ3j72Jb9JeSr/nli6rrtZMc0SwGj0NC8IzutOtORu1mCTO7uZhuf+LI7VdG4vjqNtq5GH7A==
+"@voliva/react-observable@^1.0.0-a4":
+  version "1.0.0-a4"
+  resolved "http://localhost:4873/@voliva%2freact-observable/-/react-observable-1.0.0-a4.tgz#60cc79826d8796980b0b2d213084e9dea4a705d6"
+  integrity sha512-Arol1JSZegBW7hLD4K8bvUM6Tov02xsguJ8z1iIQeoFTeo1L059XZdYaHGj7AxCTQuh9SWBy7zXfPuxLQ7q4Gw==
   dependencies:
     rxjs "^6.5.4"
 
@@ -9023,6 +9028,13 @@ react-fast-compare@^2.0.1:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/react-fast-compare/-/react-fast-compare-2.0.4.tgz#e84b4d455b0fec113e0402c329352715196f81f9"
   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
+
+react-icons@^3.8.0:
+  version "3.8.0"
+  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-3.8.0.tgz#229de5904809696c9f46932bd9b6126b2522866e"
+  integrity sha512-rA/8GRKjPulft8BSBSMsHkE1AGPqJ7LjNsyk0BE7XjG70Iz62zOled2SJk7LDo8x9z86a3xOstDlKlMZ4pAy7A==
+  dependencies:
+    camelcase "^5.0.0"
 
 react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4:
   version "16.12.0"

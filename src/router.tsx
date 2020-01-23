@@ -1,13 +1,13 @@
-import { createBrowserHistory } from 'history';
+import { createBrowserHistory } from "history";
 
 export enum Screen {
-    Register = 'register',
-    Login = 'login',
-    Main = 'main'
+  Register = "register",
+  Login = "login",
+  Main = "main"
 }
 
 export function getScreenRoutePath(screen: Screen) {
-    return '/' + screen;
+  return "/" + screen;
 }
 
 export const history = createBrowserHistory();

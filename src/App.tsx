@@ -9,15 +9,21 @@ const App: React.FC = () => {
       <Switch>
         <Route
           path={getScreenRoutePath(Screen.Login)}
-          component={lazy(() => import("./modules/auth/Login"))}
+          component={lazy(() =>
+            import(/* webpackPrefetch: true */ "./modules/auth/Login")
+          )}
         />
         <Route
           path={getScreenRoutePath(Screen.Register)}
-          component={lazy(() => import("./modules/auth/Register"))}
+          component={lazy(() =>
+            import(/* webpackPrefetch: true */ "./modules/auth/Register")
+          )}
         />
         <Route
           path={getScreenRoutePath(Screen.Main)}
-          component={lazy(() => import("./modules/Main"))}
+          component={lazy(() =>
+            import(/* webpackPrefetch: true */ "./modules/Main")
+          )}
         />
       </Switch>
     </Page>
