@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { lazy } from "react";
+import { Route, Switch } from "react-router";
+import { getScreenRoutePath, Screen } from "./router";
+import { Page } from "./components/Page";
 
 const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Page>
+      <Switch>
+        <Route
+          path={getScreenRoutePath(Screen.Login)}
+          component={lazy(() => import("./modules/auth/Login"))}
+        />
+        <Route
+          path={getScreenRoutePath(Screen.Register)}
+          component={lazy(() => import("./modules/auth/Register"))}
+        />
+        <Route
+          path={getScreenRoutePath(Screen.Main)}
+          component={lazy(() => import("./modules/Main"))}
+        />
+      </Switch>
+    </Page>
   );
-}
+};
 
 export default App;
