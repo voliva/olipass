@@ -1,20 +1,18 @@
-import { FC, useState } from "react";
-import { useSelector } from "@voliva/react-observable";
-import { getSite } from "./sites";
+import { FC, useState, MouseEvent } from "react";
+import { useSelector, useAction } from "@voliva/react-observable";
+import { getSite, createSite, upsertSite } from "./sites";
 import React from "react";
 import { Panel, Header } from "src/components/Page";
 import { Formik, Form, Field, FormikHelpers, FieldAttributes } from "formik";
 import styled from "styled-components";
 import { copyText } from "src/lib/copyText";
 import { noop } from "lodash";
+import { Site } from "src/services/encryptedDB";
 
-interface FormikSite {
-  name?: string;
-  website?: string;
-  username?: string;
-  password?: string;
-  notes?: string;
-}
+type FormikSite = Pick<
+  Site,
+  "name" | "website" | "username" | "password" | "notes"
+>;
 
 export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
   siteId,
@@ -22,11 +20,43 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
 }) => {
   const site = useSelector(getSite, { siteId });
   const [displayPassword, setDisplayPassword] = useState(false);
+  const dispatchUpsert = useAction(upsertSite);
 
-  const handleSubmit = (
-    values: FormikSite,
-    formikHelpers: FormikHelpers<FormikSite>
-  ) => {};
+  const handleSubmit = (values: FormikSite) => {
+    const updatedSite = ((): Site => {
+      if (!site) {
+        return {
+          ...createSite(),
+          ...values
+        };
+      }
+      const now = new Date();
+      return {
+        ...site,
+        ...values,
+        updatedAt: now,
+        notesUpdtAt: site.notes !== values.notes ? now : site.notesUpdtAt,
+        usernameUpdtAt:
+          site.username !== values.username ? now : site.usernameUpdtAt,
+        passwordUpdtAt:
+          site.password !== values.password ? now : site.passwordUpdtAt
+      };
+    })();
+    dispatchUpsert(updatedSite);
+    onBack();
+  };
+
+  const handleDelete = (evt: MouseEvent) => {
+    evt.preventDefault();
+    if (!window.confirm("Are you sure you want to delete this site?")) {
+      return;
+    }
+    dispatchUpsert({
+      ...site!,
+      deletedAt: new Date()
+    });
+    onBack();
+  };
 
   return (
     <Panel>
@@ -36,7 +66,18 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
           x
         </button>
       </Header>
-      <Formik initialValues={{}} onSubmit={handleSubmit}>
+      <Formik
+        initialValues={
+          site || {
+            name: "",
+            website: "",
+            username: "",
+            password: "",
+            notes: ""
+          }
+        }
+        onSubmit={handleSubmit}
+      >
         {({ values }) => (
           <Form>
             <SiteField type="text" label="Name" name="name" />
@@ -60,7 +101,7 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
               <button type="submit" disabled={!values.name && !values.name}>
                 Save
               </button>
-              <button disabled>Delete</button>
+              {!!site && <button onClick={handleDelete}>Delete</button>}
             </Actions>
           </Form>
         )}
@@ -87,7 +128,7 @@ const SiteField: FC<{ label: string } & FieldAttributes<any>> = ({
   return (
     <>
       <label htmlFor={name}>{label}</label>
-      <Field id={name} {...props} />
+      <Field id={name} autoComplete="off" {...props} />
     </>
   );
 };

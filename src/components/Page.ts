@@ -26,6 +26,23 @@ export const Panel = styled.div`
   }
 `;
 
+export const Popup = styled.div`
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(3px);
+
+  ${Panel} {
+    @media (min-width: 30em) {
+      box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.75);
+      width: 20em;
+      margin-top: 8em;
+    }
+  }
+`;
+
 export const Header = styled.div`
   background-color: ${headerBackground};
   margin: -${panelPadding} -${panelPadding} ${panelPadding} -${panelPadding};
