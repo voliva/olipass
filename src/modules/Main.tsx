@@ -5,18 +5,25 @@ import styled from "styled-components";
 import { SiteForm } from "./sites/SiteForm";
 import { SiteList } from "./sites/SiteList";
 import { Portal } from "react-portal";
+import { syncStore } from "./sync/sync";
+import { useRegisterStores } from "@voliva/react-observable";
+import { Upload } from "./sync/Upload";
 
 export const Main = () => {
   const [siteId, setSiteId] = useState<string>();
+  const [showUpload, setShowUpload] = useState(false);
+  useRegisterStores([syncStore]);
+
+  const hideUpload = () => setShowUpload(false);
 
   return (
     <Panel>
       <SiteList onSiteClick={setSiteId} />
       <Actions>
-        <Action>
-          <IoMdAdd onClick={() => setSiteId("new")} />
+        <Action onClick={() => setSiteId("new")}>
+          <IoMdAdd />
         </Action>
-        <Action disabled>
+        <Action onClick={() => setShowUpload(true)}>
           <IoMdCloudUpload />
         </Action>
         <Action disabled>
@@ -27,6 +34,13 @@ export const Main = () => {
         <Portal>
           <Popup>
             <SiteForm siteId={siteId} onBack={() => setSiteId(undefined)} />
+          </Popup>
+        </Portal>
+      )}
+      {showUpload && (
+        <Portal>
+          <Popup onClose={hideUpload}>
+            <Upload onBack={hideUpload} />
           </Popup>
         </Portal>
       )}

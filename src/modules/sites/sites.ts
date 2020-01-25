@@ -32,6 +32,10 @@ export const getSiteList = createSelector([getSites], sites =>
   Object.values(sites).filter(site => !site.deletedAt)
 );
 
+export const getDeletedSites = createSelector([getSites], sites =>
+  Object.values(sites).filter(site => !!site.deletedAt)
+);
+
 const siteIdPropSelector = createTypedPropSelector("siteId")<
   string | undefined
 >();

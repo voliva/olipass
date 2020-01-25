@@ -1,13 +1,14 @@
-import { FC, useState, MouseEvent } from "react";
-import { useSelector, useAction } from "@voliva/react-observable";
-import { getSite, createSite, upsertSite } from "./sites";
-import React from "react";
-import { Panel, Header } from "src/components/Page";
-import { Formik, Form, Field, FormikHelpers, FieldAttributes } from "formik";
-import styled from "styled-components";
-import { copyText } from "src/lib/copyText";
+import { useAction, useSelector } from "@voliva/react-observable";
+import { Field, FieldAttributes, Form, Formik } from "formik";
 import { noop } from "lodash";
+import React, { FC, MouseEvent, useState } from "react";
+import { Header, Panel, Popup } from "src/components/Page";
+import { copyText } from "src/lib/copyText";
 import { Site } from "src/services/encryptedDB";
+import styled from "styled-components";
+import { createSite, getSite, upsertSite } from "./sites";
+import { Portal } from "react-portal";
+import { PasswordGenerator } from "./PasswordGenerator";
 
 type FormikSite = Pick<
   Site,
@@ -20,6 +21,7 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
 }) => {
   const site = useSelector(getSite, { siteId });
   const [displayPassword, setDisplayPassword] = useState(false);
+  const [showGenerator, setShowGenerator] = useState(false);
   const dispatchUpsert = useAction(upsertSite);
 
   const handleSubmit = (values: FormikSite) => {
@@ -78,20 +80,25 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
         }
         onSubmit={handleSubmit}
       >
-        {({ values }) => (
+        {({ values, setFieldValue }) => (
           <Form>
             <SiteField type="text" label="Name" name="name" />
             <SiteField type="text" label="Website" name="website" />
             <SiteField type="text" label="Username" name="username" />
             <SiteField
+              style={{ fontFamily: 'Consolas, monaco, monospace'}}
               type={displayPassword ? "text" : "password"}
               label="Password"
               name="password"
             />
             <InputActions>
-              <button onClick={() => copyText(values.password)}>Copy</button>
-              <button disabled>Generate</button>
-              <button onClick={() => setDisplayPassword(d => !d)}>
+              <button type="button" onClick={() => copyText(values.password)}>
+                Copy
+              </button>
+              <button type="button" onClick={() => setShowGenerator(true)}>
+                Generate
+              </button>
+              <button type="button" onClick={() => setDisplayPassword(d => !d)}>
                 {displayPassword ? "Hide" : "Display"}
               </button>
             </InputActions>
@@ -101,8 +108,25 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
               <button type="submit" disabled={!values.name && !values.name}>
                 Save
               </button>
-              {!!site && <button onClick={handleDelete}>Delete</button>}
+              {!!site && (
+                <button type="button" onClick={handleDelete}>
+                  Delete
+                </button>
+              )}
             </Actions>
+            {showGenerator && (
+              <Portal>
+                <Popup onClose={() => setShowGenerator(false)}>
+                  <PasswordGenerator
+                    onClose={() => setShowGenerator(false)}
+                    onPassword={password => {
+                      setShowGenerator(false);
+                      setFieldValue("password", password);
+                    }}
+                  />
+                </Popup>
+              </Portal>
+            )}
           </Form>
         )}
       </Formik>

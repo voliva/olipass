@@ -1,5 +1,5 @@
 import { useAction, useDispatchedAction } from "@voliva/react-observable";
-import { Field, Form, Formik } from "formik";
+import { Field, Form, Formik, useFormikContext } from "formik";
 import { motion, useAnimation } from "framer-motion";
 import React, { useRef } from "react";
 import { useHistory } from "react-router";
@@ -10,17 +10,42 @@ import { authError, authLogin } from "./auth";
 
 export const Login = () => {
   const dispatchLogin = useAction(authLogin);
+
+  return (
+    <Panel>
+      <Header>Login</Header>
+      <Formik
+        initialValues={{
+          password: ""
+        }}
+        onSubmit={({ password }) => dispatchLogin(password)}
+      >
+        <LoginForm />
+      </Formik>
+    </Panel>
+  );
+};
+
+const LoginForm = () => {
   const history = useHistory();
   const animation = useAnimation();
   const passwordRef = useRef<HTMLInputElement>(null);
+  const {
+    isSubmitting,
+    values,
+    setSubmitting,
+    setFieldValue
+  } = useFormikContext<{ password: string }>();
 
-  const waitForError = useDispatchedAction(authError, () => {
+  useDispatchedAction(authError, () => {
     animation.start({
       x: [-1, 2, -4, 4, -4, 2, -1, 0],
       transition: {
         duration: 0.4
       }
     });
+    setSubmitting(false);
+    setFieldValue("password", "");
     if (passwordRef.current) {
       passwordRef.current.focus();
     }
@@ -31,43 +56,25 @@ export const Login = () => {
   };
 
   return (
-    <Panel>
-      <Header>Login</Header>
-      <Formik
-        initialValues={{
-          password: ""
-        }}
-        onSubmit={async ({ password }, { setSubmitting, setFieldValue }) => {
-          const errorPromise = waitForError();
-          dispatchLogin(password);
-          await errorPromise;
-          setFieldValue("password", "");
-          setSubmitting(false);
-        }}
-      >
-        {({ isSubmitting, values }) => (
-          <Form>
-            <Field
-              type="password"
-              name="password"
-              placeholder="password"
-              innerRef={passwordRef}
-            />
-            <hr />
-            <Actions>
-              <motion.button
-                animate={animation}
-                type="submit"
-                disabled={values.password === "" || isSubmitting}
-              >
-                Log in
-              </motion.button>
-              <button onClick={reset}>Reset</button>
-            </Actions>
-          </Form>
-        )}
-      </Formik>
-    </Panel>
+    <Form>
+      <Field
+        type="password"
+        name="password"
+        placeholder="password"
+        innerRef={passwordRef}
+      />
+      <hr />
+      <Actions>
+        <motion.button
+          animate={animation}
+          type="submit"
+          disabled={values.password === "" || isSubmitting}
+        >
+          Log in
+        </motion.button>
+        <button onClick={reset}>Reset</button>
+      </Actions>
+    </Form>
   );
 };
 

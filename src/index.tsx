@@ -9,9 +9,10 @@ import { authStore } from "./modules/auth/auth";
 import { history } from "./router";
 import "cryptojslib/rollups/aes";
 import { Loading } from "./Loading";
+import { siteStore } from "./modules/sites/sites";
 
 ReactDOM.render(
-  <Provider stores={[authStore]}>
+  <Provider stores={[authStore, siteStore]}>
     <Router history={history}>
       <Suspense fallback={<Loading />}>
         <App />

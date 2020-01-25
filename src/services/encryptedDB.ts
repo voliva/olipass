@@ -31,7 +31,7 @@ export const loadDB = (password: string) =>
 export const upsertDB = (newDB: DB, password: string) =>
   localStorage.setItem(lsKey, encryptDatabase(newDB, password));
 
-function encryptDatabase(local: DB, password: string): string {
+export function encryptDatabase(local: DB, password: string): string {
   const rawStringDB = JSON.stringify(local);
   const deflatedString = pako.deflate(rawStringDB, { to: "string" });
   const encryptedDB = CryptoJS.AES.encrypt(
@@ -41,7 +41,7 @@ function encryptDatabase(local: DB, password: string): string {
   return encryptedDB.toString();
 }
 
-function decryptDatabase(encryptedDB: string, password: string): DB {
+export function decryptDatabase(encryptedDB: string, password: string): DB {
   const deflatedString: string = CryptoJS.AES.decrypt(
     encryptedDB,
     password
