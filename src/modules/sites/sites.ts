@@ -9,6 +9,7 @@ import { authSuccess } from "../auth/auth";
 import { Site } from "src/services/encryptedDB";
 import { keyBy } from "lodash";
 import uuid from "uuid/v4";
+import { uploadSuccess } from "../sync/actions";
 
 export const upsertSite = createStandardAction<Site>("upsert site");
 
@@ -22,7 +23,11 @@ export const [getSites, siteStore] = createStore<Record<string, Site>>(
         type(upsertSite, ({ payload }) => ({
           ...state,
           [payload.id]: payload
-        }))
+        })),
+        type(uploadSuccess, ({ payload }) => payload.sites.reduce((acc, site) => ({
+          ...acc,
+          [site.id]: site
+        }), {}))
       ],
       state
     )

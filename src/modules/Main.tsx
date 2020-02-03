@@ -6,12 +6,14 @@ import { SiteForm } from "./sites/SiteForm";
 import { SiteList } from "./sites/SiteList";
 import { Portal } from "react-portal";
 import { syncStore } from "./sync/sync";
-import { useRegisterStores } from "@voliva/react-observable";
+import { exportDatabase } from './sync/actions';
+import { useRegisterStores, useAction } from "@voliva/react-observable";
 import { Upload } from "./sync/Upload";
 
 export const Main = () => {
   const [siteId, setSiteId] = useState<string>();
   const [showUpload, setShowUpload] = useState(false);
+  const dispatchExport = useAction(exportDatabase);
   useRegisterStores([syncStore]);
 
   const hideUpload = () => setShowUpload(false);
@@ -26,7 +28,7 @@ export const Main = () => {
         <Action onClick={() => setShowUpload(true)}>
           <IoMdCloudUpload />
         </Action>
-        <Action disabled>
+        <Action onClick={dispatchExport}>
           <IoMdDownload />
         </Action>
       </Actions>

@@ -2,32 +2,36 @@ import {
   createSelector,
   createStatelessStore,
   filterAction,
-  createStandardAction,
   ReadSelectorFnType
 } from "@voliva/react-observable";
+import { format } from "date-fns";
+import { saveAs } from "file-saver";
 import {
   ignoreElements,
   map,
+  switchMap,
   tap,
-  withLatestFrom,
-  switchMap
+  withLatestFrom
 } from "rxjs/operators";
-import { upsertDB, decryptDatabase } from "src/services/encryptedDB";
+import {
+  decryptDatabase,
+  encryptDatabase,
+  Site,
+  upsertDB
+} from "src/services/encryptedDB";
 import { getPassword } from "../auth/auth";
 import { getDeletedSites, getSiteList, upsertSite } from "../sites/sites";
-import { of } from "rxjs";
+import {
+  exportDatabase,
+  uploadError,
+  uploadFile,
+  uploadSuccess
+} from "./actions";
 
 const getAllSites = createSelector(
   [getSiteList, getDeletedSites],
   (sites, deleted) => sites.concat(deleted)
 );
-
-export const uploadFile = createStandardAction<{
-  password?: string;
-  file: File;
-}>("upload file");
-export const uploadSuccess = createStandardAction("upload success");
-export const uploadError = createStandardAction<string>("upload error");
 
 export const syncStore = createStatelessStore();
 
@@ -75,8 +79,103 @@ syncStore.addEpic((action$, readSelector) =>
   )
 );
 
+syncStore.addEpic((action$, readSelector) =>
+  action$.pipe(
+    filterAction(exportDatabase),
+    map(
+      () =>
+        [
+          readSelector(getPassword).getValue(),
+          readSelector(getAllSites).getValue()
+        ] as [string, Site[]]
+    ),
+    map(([password, sites]) => {
+      const encryptedDb = encryptDatabase(
+        {
+          sites
+        },
+        password
+      );
+      const blob = b64toBlob(encryptedDb, "application/octet-stream");
+      const filename = format(Date.now(), "yyyyMMdd") + ".psw";
+      saveAs(blob, filename);
+    }),
+    ignoreElements()
+  )
+);
+
 const mergeDatabase = (database: any, readSelector: ReadSelectorFnType) => {
-  return uploadError("Unkown format");
+  if (!Array.isArray(database.sites)) {
+    return uploadError("Unkown format");
+  }
+
+  try {
+    const newSites = mergeSites(
+      readSelector(getAllSites).getValue(),
+      database.sites
+    );
+    return uploadSuccess({
+      sites: newSites
+    });
+  } catch (ex) {
+    return uploadError("Unkown format");
+  }
+};
+
+const mergeSite = (local: Site, merging: any): Site => {
+  const ret = {
+    ...local
+  };
+
+  if (local.updatedAt < new Date(merging.updatedAt)) {
+    ret.name = merging.name;
+    ret.website = merging.website;
+    ret.updatedAt = new Date(merging.updatedAt);
+  }
+
+  if (local.usernameUpdtAt < new Date(merging.usernameUpdtAt)) {
+    ret.username = merging.username;
+    ret.usernameUpdtAt = new Date(merging.usernameUpdtAt);
+  }
+
+  if (local.passwordUpdtAt < new Date(merging.passwordUpdtAt)) {
+    ret.password = merging.password;
+    ret.passwordUpdtAt = new Date(merging.passwordUpdtAt);
+  }
+
+  if (local.notesUpdtAt < new Date(merging.notesUpdtAt)) {
+    ret.notes = merging.notes;
+    ret.notesUpdtAt = new Date(merging.notesUpdtAt);
+  }
+
+  if (merging.deletedAt) {
+    ret.deletedAt = new Date(merging.deletedAt);
+  }
+
+  return ret;
+};
+
+const requiredSiteFields: Array<keyof Site> = [
+  "id",
+  "updatedAt",
+  "usernameUpdtAt",
+  "passwordUpdtAt",
+  "notesUpdtAt"
+];
+const mergeSites = (local: Site[], merging: any[]): Site[] => {
+  const result = [...local];
+  merging.forEach(mergingSite => {
+    if (!requiredSiteFields.every(key => key in mergingSite)) {
+      throw new Error("missing field id in site");
+    }
+    const idx = result.findIndex(({ id }) => id === mergingSite.id);
+    if (idx < 0) {
+      result.push(mergingSite);
+    } else {
+      result[idx] = mergeSite(result[idx], mergingSite);
+    }
+  });
+  return result;
 };
 
 function blobToBase64(blob: Blob) {
