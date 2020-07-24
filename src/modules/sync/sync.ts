@@ -1,7 +1,8 @@
+import { bind } from "@react-rxjs/core";
 import { format } from "date-fns";
 import { saveAs } from "file-saver";
-import { combineLatest, Subject } from "rxjs";
-import { map, switchMap, withLatestFrom, filter } from "rxjs/operators";
+import { combineLatest, defer, Subject } from "rxjs";
+import { filter, map, switchMap, tap, withLatestFrom } from "rxjs/operators";
 import { createStandardAction } from "src/lib/storeHelpers";
 import {
   DB,
@@ -11,8 +12,7 @@ import {
   upsertDB,
 } from "src/services/encryptedDB";
 import { password$ } from "../auth/auth";
-import { deletedSite$, siteList$ } from "../sites/sites";
-import { bind } from "@react-rxjs/core";
+import * as sites from "../sites/sites";
 
 export const uploadFile = new Subject<{
   password?: string;
@@ -20,18 +20,24 @@ export const uploadFile = new Subject<{
 }>();
 export const exportDatabase = new Subject<void>();
 
-const allSites$ = combineLatest(deletedSite$, siteList$).pipe(
-  map(([deleted, sites]) => sites.concat(deleted))
-);
+const allSites$ = combineLatest(
+  defer(() => sites.deletedSite$),
+  defer(() => sites.siteList$)
+).pipe(map(([deleted, sites]) => sites.concat(deleted)));
 
-allSites$.pipe(withLatestFrom(password$)).subscribe(([sites, password]) => {
-  upsertDB(
-    {
-      sites,
-    },
-    password
-  );
-});
+export const [, databasePersistence] = bind(
+  allSites$.pipe(
+    withLatestFrom(password$),
+    tap(([sites, password]) => {
+      upsertDB(
+        {
+          sites,
+        },
+        password
+      );
+    })
+  )
+);
 
 const uploadError = createStandardAction<string>("upload error");
 const uploadSuccess = createStandardAction<DB>("upload success");
@@ -71,8 +77,8 @@ export const [, uploadSuccess$] = bind(
   )
 );
 
-exportDatabase
-  .pipe(
+export const [, databaseExporter] = bind(
+  exportDatabase.pipe(
     withLatestFrom(password$, allSites$),
     map(([_, password, sites]) => {
       const encryptedDb = encryptDatabase(
@@ -82,12 +88,13 @@ exportDatabase
         password
       );
       return b64toBlob(encryptedDb, "application/octet-stream");
+    }),
+    tap((blob) => {
+      const filename = format(Date.now(), "yyyyMMdd") + ".psw";
+      saveAs(blob, filename);
     })
   )
-  .subscribe((blob) => {
-    const filename = format(Date.now(), "yyyyMMdd") + ".psw";
-    saveAs(blob, filename);
-  });
+);
 
 const mergeDatabase = (localSites: Site[], database: any) => {
   if (!Array.isArray(database.sites)) {

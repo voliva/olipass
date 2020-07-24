@@ -4,7 +4,7 @@ import React, { ChangeEvent, FC } from "react";
 import { Header, Panel } from "src/components/Page";
 import { uploadFile, uploadError$, uploadSuccess$ } from "./sync";
 import { useAnimation, motion } from "framer-motion";
-import { useAction, useObservableActions } from "src/lib/storeHelpers";
+import { useAction, useObservableEffect } from "src/lib/storeHelpers";
 
 interface FormikState {
   password: string;
@@ -18,7 +18,7 @@ const initialState: FormikState = {
 
 export const Upload: FC<{ onBack?: () => void }> = ({ onBack = noop }) => {
   const dispatchUpload = useAction(uploadFile);
-  useObservableActions(uploadSuccess$, onBack);
+  useObservableEffect(uploadSuccess$, onBack);
 
   return (
     <Panel>
@@ -39,7 +39,7 @@ const UploadForm = () => {
   const { values } = useFormikContext<any>();
   const animation = useAnimation();
 
-  useObservableActions(uploadError$, () => {
+  useObservableEffect(uploadError$, () => {
     animation.start({
       x: [-1, 2, -4, 4, -4, 2, -1, 0],
       transition: {

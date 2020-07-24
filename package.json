@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@react-rxjs/core": "^0.1.0",
+    "@react-rxjs/utils": "^0.1.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -27,11 +28,12 @@
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
     "react-rxjs": "^3.0.0-alpha.5",
-    "react-scripts": "3.3.0",
+    "react-scripts": "3.4.1",
     "react-switch": "^5.0.1",
     "rxjs": "^6.5.4",
+    "rxjs-traces": "^0.1.0-alpha.6",
     "styled-components": "^5.0.0",
-    "typescript": "~3.7.2",
+    "typescript": "~3.9.7",
     "uuid": "^3.4.0"
   },
   "scripts": {

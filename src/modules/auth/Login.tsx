@@ -6,7 +6,7 @@ import { Header, Panel } from "src/components/Page";
 import { getScreenRoutePath, Screen } from "src/router";
 import styled from "styled-components";
 import { error$, authLogin } from "./auth";
-import { useAction, useObservableActions } from "src/lib/storeHelpers";
+import { useAction, useObservableEffect } from "src/lib/storeHelpers";
 
 export const Login = () => {
   const dispatchLogin = useAction(authLogin);
@@ -37,7 +37,7 @@ const LoginForm = () => {
     setFieldValue,
   } = useFormikContext<{ password: string }>();
 
-  useObservableActions(error$, () => {
+  useObservableEffect(error$, () => {
     animation.start({
       x: [-1, 2, -4, 4, -4, 2, -1, 0],
       transition: {

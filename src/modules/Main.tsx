@@ -1,25 +1,28 @@
+import { Subscribe } from "@react-rxjs/utils";
 import React, { useState } from "react";
 import { IoMdAdd, IoMdCloudUpload, IoMdDownload } from "react-icons/io";
+import { Portal } from "react-portal";
 import { Panel, Popup } from "src/components/Page";
 import styled from "styled-components";
 import { SiteForm } from "./sites/SiteForm";
 import { SiteList } from "./sites/SiteList";
-import { Portal } from "react-portal";
-import { syncStore } from "./sync/sync";
-import { exportDatabase } from './sync/actions';
-import { useRegisterStores, useAction } from "@voliva/react-observable";
+import {
+  databaseExporter,
+  databasePersistence,
+  exportDatabase,
+} from "./sync/sync";
 import { Upload } from "./sync/Upload";
 
 export const Main = () => {
   const [siteId, setSiteId] = useState<string>();
   const [showUpload, setShowUpload] = useState(false);
-  const dispatchExport = useAction(exportDatabase);
-  useRegisterStores([syncStore]);
 
   const hideUpload = () => setShowUpload(false);
 
   return (
     <Panel>
+      <Subscribe source$={databaseExporter} />
+      <Subscribe source$={databasePersistence} />
       <SiteList onSiteClick={setSiteId} />
       <Actions>
         <Action onClick={() => setSiteId("new")}>
@@ -28,7 +31,7 @@ export const Main = () => {
         <Action onClick={() => setShowUpload(true)}>
           <IoMdCloudUpload />
         </Action>
-        <Action onClick={dispatchExport}>
+        <Action onClick={() => exportDatabase.next()}>
           <IoMdDownload />
         </Action>
       </Actions>

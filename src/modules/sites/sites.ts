@@ -1,55 +1,62 @@
-import { database$ } from "../auth/auth";
-import { Site } from "src/services/encryptedDB";
-import { keyBy } from "lodash";
-import uuid from "uuid/v4";
-import { Subject } from "rxjs";
-import { map, switchMap, scan } from "rxjs/operators";
 import { bind } from "@react-rxjs/core";
+import { keyBy } from "lodash";
+import { defer, merge, Observable, Subject } from "rxjs";
+import { map, scan, switchMap, startWith } from "rxjs/operators";
+import { Site } from "src/services/encryptedDB";
+import uuid from "uuid/v4";
+import { database$ } from "../auth/auth";
+import * as sync from "../sync/sync";
+import { addDebugTag } from "rxjs-traces";
 
 export const upsertSite = new Subject<Site>();
 
 const databaseSite$ = database$.pipe(map((db) => keyBy(db.sites, "id")));
 
+const siteUpdate$: Observable<Site | Site[]> = merge(
+  upsertSite,
+  defer(() => sync.uploadSuccess$).pipe(map((db) => db.sites))
+);
+
 const [, site$] = bind(
   databaseSite$.pipe(
     switchMap((site) =>
-      upsertSite.pipe(
+      siteUpdate$.pipe(
         scan(
-          (acc, newSite) => ({
-            ...acc,
-            [newSite.id]: newSite,
-          }),
+          (acc, newSite) =>
+            Array.isArray(newSite)
+              ? keyBy(newSite, "id")
+              : {
+                  ...acc,
+                  [newSite.id]: newSite,
+                },
           site
-        )
+        ),
+        startWith(site)
       )
-    )
+    ),
+    addDebugTag("site$")
   )
 );
 
-// type(uploadSuccess, ({ payload }) =>
-//   payload.sites.reduce(
-//     (acc, site) => ({
-//       ...acc,
-//       [site.id]: site,
-//     }),
-//     {}
-//   )
-// ),
-
 export const [useSiteList, siteList$] = bind(
   site$.pipe(
-    map((sites) => Object.values(sites).filter((site) => !site.deletedAt))
+    map((sites) => Object.values(sites).filter((site) => !site.deletedAt)),
+    addDebugTag("siteList$")
   )
 );
 
 export const [, deletedSite$] = bind(
   site$.pipe(
-    map((sites) => Object.values(sites).filter((site) => !!site.deletedAt))
+    map((sites) => Object.values(sites).filter((site) => !!site.deletedAt)),
+    addDebugTag("deletedSite$")
   )
 );
 
 export const [useSite] = bind((id: string) =>
-  site$.pipe(map((sites) => sites[id]))
+  site$.pipe(
+    map((sites) => sites[id]),
+    addDebugTag("useSite")
+  )
 );
 
 const localeIncludes = (base: string | undefined, substr: string) =>
@@ -64,7 +71,8 @@ export const [useFilteredSites] = bind((filter: string) =>
           localeIncludes(username, filter) ||
           localeIncludes(notes, filter)
       )
-    )
+    ),
+    addDebugTag("useFilteredSites")
   )
 );
 

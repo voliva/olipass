@@ -2,11 +2,15 @@ import "cryptojslib/rollups/aes";
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
 import { Router } from "react-router";
-import App from "./App";
+import { Observable } from "rxjs";
+import { patchObservable } from "rxjs-traces";
 import "./index.css";
 import { Loading } from "./Loading";
 import { history } from "./router";
 import * as serviceWorker from "./serviceWorker";
+import App from './App';
+
+patchObservable(Observable);
 
 ReactDOM.render(
   <Router history={history}>

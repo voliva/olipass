@@ -1,22 +1,37 @@
-import { Subject, Observable } from "rxjs";
-import { useCallback, useEffect, useMemo } from "react";
+import { useSubscribe } from '@react-rxjs/utils';
+import { useCallback, useMemo } from "react";
+import { Observable, Subject } from "rxjs";
 import { tap } from "rxjs/operators";
 
 export const useAction = <T>(subject: Subject<T>) =>
   useCallback((action: T) => subject.next(action), [subject]);
 
-export const useObservableEffect = (effect$: Observable<any>) =>
-  useEffect(() => {
-    const subscription = effect$.subscribe();
-    return () => subscription.unsubscribe();
-  }, [effect$]);
-
-export const useObservableActions = <T>(
+export const useObservableEffect = <T>(
   observable: Observable<T>,
   handler: (action: T) => void
 ) =>
-  useObservableEffect(
-    useMemo(() => observable.pipe(tap(handler)), [observable, handler])
+  useSubscribe(
+    useMemo(
+      () =>
+        observable.pipe(
+          (stream) =>
+            new Observable<T>((obs) => {
+              let isSync = true;
+              const subscription = stream.subscribe(
+                (next) => {
+                  if (isSync) return;
+                  obs.next(next);
+                },
+                obs.error.bind(obs),
+                obs.complete.bind(obs)
+              );
+              isSync = false;
+              return subscription;
+            }),
+          tap(handler)
+        ),
+      [observable, handler]
+    )
   );
 
 type ArgumentTypes<T> = T extends (...args: infer U) => infer R ? U : never;
