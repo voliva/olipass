@@ -1,121 +1,103 @@
-import {
-  createSelector,
-  createStatelessStore,
-  filterAction,
-  ReadSelectorFnType
-} from "@voliva/react-observable";
 import { format } from "date-fns";
 import { saveAs } from "file-saver";
+import { combineLatest, Subject } from "rxjs";
+import { map, switchMap, withLatestFrom, filter } from "rxjs/operators";
+import { createStandardAction } from "src/lib/storeHelpers";
 import {
-  ignoreElements,
-  map,
-  switchMap,
-  tap,
-  withLatestFrom
-} from "rxjs/operators";
-import {
+  DB,
   decryptDatabase,
   encryptDatabase,
   Site,
-  upsertDB
+  upsertDB,
 } from "src/services/encryptedDB";
-import { getPassword } from "../auth/auth";
-import { getDeletedSites, getSiteList, upsertSite } from "../sites/sites";
-import {
-  exportDatabase,
-  uploadError,
-  uploadFile,
-  uploadSuccess
-} from "./actions";
+import { password$ } from "../auth/auth";
+import { deletedSite$, siteList$ } from "../sites/sites";
+import { bind } from "@react-rxjs/core";
 
-const getAllSites = createSelector(
-  [getSiteList, getDeletedSites],
-  (sites, deleted) => sites.concat(deleted)
+export const uploadFile = new Subject<{
+  password?: string;
+  file: File;
+}>();
+export const exportDatabase = new Subject<void>();
+
+const allSites$ = combineLatest(deletedSite$, siteList$).pipe(
+  map(([deleted, sites]) => sites.concat(deleted))
 );
 
-export const syncStore = createStatelessStore();
+allSites$.pipe(withLatestFrom(password$)).subscribe(([sites, password]) => {
+  upsertDB(
+    {
+      sites,
+    },
+    password
+  );
+});
 
-syncStore.addEpic((action$, readSelector) =>
-  action$.pipe(
-    filterAction(upsertSite),
-    withLatestFrom(readSelector(getAllSites)),
-    map(([, sites]) => sites),
-    withLatestFrom(readSelector(getPassword)),
-    tap(([sites, password]) => {
-      upsertDB(
-        {
-          sites
-        },
-        password
-      );
-    }),
-    ignoreElements()
-  )
-);
+const uploadError = createStandardAction<string>("upload error");
+const uploadSuccess = createStandardAction<DB>("upload success");
 
-syncStore.addEpic((action$, readSelector) =>
-  action$.pipe(
-    filterAction(uploadFile),
-    map(({ payload }) =>
-      payload.password
-        ? payload
-        : {
-            ...payload,
-            password: readSelector(getPassword).getValue()
-          }
-    ),
+const [, mergeResult$] = bind(
+  uploadFile.pipe(
+    withLatestFrom(password$),
+    map(([{ password, file }, oldPassword]) => ({
+      password: password ?? oldPassword,
+      file,
+    })),
     switchMap(({ file, password }) =>
-      blobToBase64(file).then(data => ({ data, password }))
+      blobToBase64(file).then((data) => ({ data, password }))
     ),
-    map(({ data, password }) => {
+    withLatestFrom(allSites$),
+    map(([{ data, password }, allSites]) => {
       try {
         const decrypted = decryptDatabase(data, password!);
-        return mergeDatabase(decrypted, readSelector);
+        return mergeDatabase(allSites, decrypted);
       } catch (ex) {
         return uploadError("Wrong password or invalid file");
       }
-    }),
-    tap(console.log)
+    })
   )
 );
 
-syncStore.addEpic((action$, readSelector) =>
-  action$.pipe(
-    filterAction(exportDatabase),
-    map(
-      () =>
-        [
-          readSelector(getPassword).getValue(),
-          readSelector(getAllSites).getValue()
-        ] as [string, Site[]]
-    ),
-    map(([password, sites]) => {
+export const [, uploadError$] = bind(
+  mergeResult$.pipe(
+    filter(uploadError.isCreatorOf),
+    map((v) => v.payload)
+  )
+);
+export const [, uploadSuccess$] = bind(
+  mergeResult$.pipe(
+    filter(uploadSuccess.isCreatorOf),
+    map((v) => v.payload)
+  )
+);
+
+exportDatabase
+  .pipe(
+    withLatestFrom(password$, allSites$),
+    map(([_, password, sites]) => {
       const encryptedDb = encryptDatabase(
         {
-          sites
+          sites,
         },
         password
       );
-      const blob = b64toBlob(encryptedDb, "application/octet-stream");
-      const filename = format(Date.now(), "yyyyMMdd") + ".psw";
-      saveAs(blob, filename);
-    }),
-    ignoreElements()
+      return b64toBlob(encryptedDb, "application/octet-stream");
+    })
   )
-);
+  .subscribe((blob) => {
+    const filename = format(Date.now(), "yyyyMMdd") + ".psw";
+    saveAs(blob, filename);
+  });
 
-const mergeDatabase = (database: any, readSelector: ReadSelectorFnType) => {
+const mergeDatabase = (localSites: Site[], database: any) => {
   if (!Array.isArray(database.sites)) {
     return uploadError("Unkown format");
   }
 
   try {
-    const newSites = mergeSites(
-      readSelector(getAllSites).getValue(),
-      database.sites
-    );
+    const newSites = mergeSites(localSites, database.sites);
     return uploadSuccess({
-      sites: newSites
+      sites: newSites,
     });
   } catch (ex) {
     return uploadError("Unkown format");
@@ -124,7 +106,7 @@ const mergeDatabase = (database: any, readSelector: ReadSelectorFnType) => {
 
 const mergeSite = (local: Site, merging: any): Site => {
   const ret = {
-    ...local
+    ...local,
   };
 
   if (local.updatedAt < new Date(merging.updatedAt)) {
@@ -160,12 +142,12 @@ const requiredSiteFields: Array<keyof Site> = [
   "updatedAt",
   "usernameUpdtAt",
   "passwordUpdtAt",
-  "notesUpdtAt"
+  "notesUpdtAt",
 ];
 const mergeSites = (local: Site[], merging: any[]): Site[] => {
   const result = [...local];
-  merging.forEach(mergingSite => {
-    if (!requiredSiteFields.every(key => key in mergingSite)) {
+  merging.forEach((mergingSite) => {
+    if (!requiredSiteFields.every((key) => key in mergingSite)) {
       throw new Error("missing field id in site");
     }
     const idx = result.findIndex(({ id }) => id === mergingSite.id);
@@ -185,9 +167,9 @@ function blobToBase64(blob: Blob) {
       const buffer = reader.result as ArrayBuffer;
       resolve(buffer);
     };
-    reader.onerror = err => reject(err);
+    reader.onerror = (err) => reject(err);
     reader.readAsArrayBuffer(blob);
-  }).then(buffer => {
+  }).then((buffer) => {
     var binary = "";
     var bytes = new Uint8Array(buffer);
     var len = bytes.byteLength;

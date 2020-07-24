@@ -2,9 +2,9 @@ import { Field, FieldProps, Form, Formik, useFormikContext } from "formik";
 import { noop } from "lodash";
 import React, { ChangeEvent, FC } from "react";
 import { Header, Panel } from "src/components/Page";
-import { useAction, useDispatchedAction } from "@voliva/react-observable";
-import { uploadFile, uploadError, uploadSuccess } from "./actions";
+import { uploadFile, uploadError$, uploadSuccess$ } from "./sync";
 import { useAnimation, motion } from "framer-motion";
+import { useAction, useObservableActions } from "src/lib/storeHelpers";
 
 interface FormikState {
   password: string;
@@ -13,12 +13,12 @@ interface FormikState {
 
 const initialState: FormikState = {
   password: "",
-  file: null as any
+  file: null as any,
 };
 
 export const Upload: FC<{ onBack?: () => void }> = ({ onBack = noop }) => {
   const dispatchUpload = useAction(uploadFile);
-  useDispatchedAction(uploadSuccess, onBack);
+  useObservableActions(uploadSuccess$, onBack);
 
   return (
     <Panel>
@@ -36,15 +36,15 @@ export const Upload: FC<{ onBack?: () => void }> = ({ onBack = noop }) => {
 };
 
 const UploadForm = () => {
-  const { values } = useFormikContext();
+  const { values } = useFormikContext<any>();
   const animation = useAnimation();
 
-  useDispatchedAction(uploadError, () => {
+  useObservableActions(uploadError$, () => {
     animation.start({
       x: [-1, 2, -4, 4, -4, 2, -1, 0],
       transition: {
-        duration: 0.4
-      }
+        duration: 0.4,
+      },
     });
   });
 

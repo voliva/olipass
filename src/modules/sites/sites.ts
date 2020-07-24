@@ -42,7 +42,7 @@ export const [useSiteList, siteList$] = bind(
   )
 );
 
-export const [useDeletedSites] = bind(
+export const [, deletedSite$] = bind(
   site$.pipe(
     map((sites) => Object.values(sites).filter((site) => !!site.deletedAt))
   )
