@@ -1,4 +1,3 @@
-import { useAction, useSelector } from "@voliva/react-observable";
 import { Field, FieldAttributes, Form, Formik } from "formik";
 import { noop } from "lodash";
 import React, { FC, MouseEvent, useState } from "react";
@@ -6,9 +5,10 @@ import { Header, Panel, Popup } from "src/components/Page";
 import { copyText } from "src/lib/copyText";
 import { Site } from "src/services/encryptedDB";
 import styled from "styled-components";
-import { createSite, getSite, upsertSite } from "./sites";
+import { createSite, useSite, upsertSite } from "./sites";
 import { Portal } from "react-portal";
 import { PasswordGenerator } from "./PasswordGenerator";
+import { useAction } from "src/lib/storeHelpers";
 
 type FormikSite = Pick<
   Site,
@@ -17,9 +17,9 @@ type FormikSite = Pick<
 
 export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
   siteId,
-  onBack = noop
+  onBack = noop,
 }) => {
-  const site = useSelector(getSite, { siteId });
+  const site = useSite(siteId || ""); // TODO
   const [displayPassword, setDisplayPassword] = useState(false);
   const [showGenerator, setShowGenerator] = useState(false);
   const dispatchUpsert = useAction(upsertSite);
@@ -29,7 +29,7 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
       if (!site) {
         return {
           ...createSite(),
-          ...values
+          ...values,
         };
       }
       const now = new Date();
@@ -41,7 +41,7 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
         usernameUpdtAt:
           site.username !== values.username ? now : site.usernameUpdtAt,
         passwordUpdtAt:
-          site.password !== values.password ? now : site.passwordUpdtAt
+          site.password !== values.password ? now : site.passwordUpdtAt,
       };
     })();
     dispatchUpsert(updatedSite);
@@ -55,7 +55,7 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
     }
     dispatchUpsert({
       ...site!,
-      deletedAt: new Date()
+      deletedAt: new Date(),
     });
     onBack();
   };
@@ -75,7 +75,7 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
             website: "",
             username: "",
             password: "",
-            notes: ""
+            notes: "",
           }
         }
         onSubmit={handleSubmit}
@@ -86,7 +86,7 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
             <SiteField type="text" label="Website" name="website" />
             <SiteField type="text" label="Username" name="username" />
             <SiteField
-              style={{ fontFamily: 'Consolas, monaco, monospace'}}
+              style={{ fontFamily: "Consolas, monaco, monospace" }}
               type={displayPassword ? "text" : "password"}
               label="Password"
               name="password"
@@ -98,7 +98,10 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
               <button type="button" onClick={() => setShowGenerator(true)}>
                 Generate
               </button>
-              <button type="button" onClick={() => setDisplayPassword(d => !d)}>
+              <button
+                type="button"
+                onClick={() => setDisplayPassword((d) => !d)}
+              >
                 {displayPassword ? "Hide" : "Display"}
               </button>
             </InputActions>
@@ -119,7 +122,7 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
                 <Popup onClose={() => setShowGenerator(false)}>
                   <PasswordGenerator
                     onClose={() => setShowGenerator(false)}
-                    onPassword={password => {
+                    onPassword={(password) => {
                       setShowGenerator(false);
                       setFieldValue("password", password);
                     }}

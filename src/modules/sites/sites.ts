@@ -1,71 +1,71 @@
-import {
-  createStore,
-  switchAction,
-  createSelector,
-  createTypedPropSelector,
-  createStandardAction
-} from "@voliva/react-observable";
-import { authSuccess } from "../auth/auth";
+import { database$ } from "../auth/auth";
 import { Site } from "src/services/encryptedDB";
 import { keyBy } from "lodash";
 import uuid from "uuid/v4";
-import { uploadSuccess } from "../sync/actions";
+import { Subject } from "rxjs";
+import { map, switchMap, scan } from "rxjs/operators";
+import { bind } from "@react-rxjs/core";
 
-export const upsertSite = createStandardAction<Site>("upsert site");
+export const upsertSite = new Subject<Site>();
 
-export const [getSites, siteStore] = createStore<Record<string, Site>>(
-  {},
-  (state, action) =>
-    switchAction(
-      action,
-      type => [
-        type(authSuccess, ({ payload }) => keyBy(payload.database.sites, "id")),
-        type(upsertSite, ({ payload }) => ({
-          ...state,
-          [payload.id]: payload
-        })),
-        type(uploadSuccess, ({ payload }) => payload.sites.reduce((acc, site) => ({
-          ...acc,
-          [site.id]: site
-        }), {}))
-      ],
-      state
+const databaseSite$ = database$.pipe(map((db) => keyBy(db.sites, "id")));
+
+const [, site$] = bind(
+  databaseSite$.pipe(
+    switchMap((site) =>
+      upsertSite.pipe(
+        scan(
+          (acc, newSite) => ({
+            ...acc,
+            [newSite.id]: newSite,
+          }),
+          site
+        )
+      )
     )
+  )
 );
 
-export const getSiteList = createSelector([getSites], sites =>
-  Object.values(sites).filter(site => !site.deletedAt)
+// type(uploadSuccess, ({ payload }) =>
+//   payload.sites.reduce(
+//     (acc, site) => ({
+//       ...acc,
+//       [site.id]: site,
+//     }),
+//     {}
+//   )
+// ),
+
+export const [useSiteList, siteList$] = bind(
+  site$.pipe(
+    map((sites) => Object.values(sites).filter((site) => !site.deletedAt))
+  )
 );
 
-export const getDeletedSites = createSelector([getSites], sites =>
-  Object.values(sites).filter(site => !!site.deletedAt)
+export const [useDeletedSites] = bind(
+  site$.pipe(
+    map((sites) => Object.values(sites).filter((site) => !!site.deletedAt))
+  )
 );
 
-const siteIdPropSelector = createTypedPropSelector("siteId")<
-  string | undefined
->();
-export const getSite = createSelector(
-  [getSites, siteIdPropSelector],
-  (sites, id) => (id ? sites[id] : undefined)
+export const [useSite] = bind((id: string) =>
+  site$.pipe(map((sites) => sites[id]))
 );
 
-const filterPropSelector = createTypedPropSelector("filter")<
-  string | undefined
->();
 const localeIncludes = (base: string | undefined, substr: string) =>
   base && base.toLowerCase().includes(substr.toLowerCase());
-export const getFilteredSiteList = createSelector(
-  [getSiteList, filterPropSelector],
-  (sites, filter) =>
-    filter
-      ? sites.filter(
-          ({ name, website, username, notes }) =>
-            localeIncludes(name, filter) ||
-            localeIncludes(website, filter) ||
-            localeIncludes(username, filter) ||
-            localeIncludes(notes, filter)
-        )
-      : sites
+export const [useFilteredSites] = bind((filter: string) =>
+  siteList$.pipe(
+    map((sites) =>
+      sites.filter(
+        ({ name, website, username, notes }) =>
+          localeIncludes(name, filter) ||
+          localeIncludes(website, filter) ||
+          localeIncludes(username, filter) ||
+          localeIncludes(notes, filter)
+      )
+    )
+  )
 );
 
 export const createSite = (): Site => ({
@@ -73,5 +73,5 @@ export const createSite = (): Site => ({
   notesUpdtAt: new Date(),
   passwordUpdtAt: new Date(),
   updatedAt: new Date(),
-  usernameUpdtAt: new Date()
+  usernameUpdtAt: new Date(),
 });

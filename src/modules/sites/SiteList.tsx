@@ -1,18 +1,15 @@
-import { useSelector } from "@voliva/react-observable";
 import { noop } from "lodash";
 import React, { FC } from "react";
 import { Header } from "src/components/Page";
 import { useInputState } from "src/lib/useInputState";
 import styled from "styled-components";
-import { getFilteredSiteList } from "./sites";
+import { useFilteredSites } from "./sites";
 
 export const SiteList: FC<{ onSiteClick?: (id: string) => void }> = ({
-  onSiteClick = noop
+  onSiteClick = noop,
 }) => {
   const [filter, handleFilterChange] = useInputState();
-  const sites = useSelector(getFilteredSiteList, {
-    filter
-  });
+  const sites = useFilteredSites(filter);
 
   return (
     <>
@@ -23,7 +20,7 @@ export const SiteList: FC<{ onSiteClick?: (id: string) => void }> = ({
         placeholder="Search..."
       />
       <CappedList>
-        {sites.map(site => (
+        {sites.map((site) => (
           <Site key={site.id} onClick={() => onSiteClick(site.id)}>
             {site.name || site.website}
           </Site>

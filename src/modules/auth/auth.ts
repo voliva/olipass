@@ -21,13 +21,13 @@ const [, login$] = bind(
       try {
         const database = loadDB(password);
         return {
-          result: "success",
+          result: "success" as const,
           database,
         };
       } catch (ex) {
         console.error(ex);
         return {
-          result: "error",
+          result: "error" as const,
         };
       }
     })
@@ -42,25 +42,36 @@ const [, create$] = bind(
       };
       upsertDB(database, password);
       return {
-        result: "success",
+        result: "success" as const,
         database,
       };
     })
   )
 );
 
-const loginPassword$ = login$.pipe(
+const loginResult$ = login$.pipe(
   filter(({ result }) => result === "success"),
   withLatestFrom(authLogin),
-  map(([_, password]) => password)
+  map(([login, password]) => ({
+    database: login.database as DB,
+    password,
+  }))
 );
-const createPassword$ = create$.pipe(
+const createResult$ = create$.pipe(
   filter(({ result }) => result === "success"),
   withLatestFrom(authCreate),
-  map(([_, password]) => password)
+  map(([creation, password]) => ({
+    database: creation.database,
+    password,
+  }))
 );
 
-export const [, password$] = bind(merge(loginPassword$, createPassword$));
+export const [, password$] = bind(
+  merge(loginResult$, createResult$).pipe(map(({ password }) => password))
+);
+export const [, database$] = bind(
+  merge(loginResult$, createResult$).pipe(map(({ database }) => database))
+);
 export const [, error$] = bind(
   login$.pipe(
     filter(({ result }) => result === "error"),
