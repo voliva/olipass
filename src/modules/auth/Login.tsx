@@ -1,4 +1,3 @@
-import { useAction, useDispatchedAction } from "@voliva/react-observable";
 import { Field, Form, Formik, useFormikContext } from "formik";
 import { motion, useAnimation } from "framer-motion";
 import React, { useRef } from "react";
@@ -6,7 +5,8 @@ import { useHistory } from "react-router";
 import { Header, Panel } from "src/components/Page";
 import { getScreenRoutePath, Screen } from "src/router";
 import styled from "styled-components";
-import { authError, authLogin } from "./auth";
+import { error$, authLogin } from "./auth";
+import { useAction, useObservableActions } from "src/lib/storeHelpers";
 
 export const Login = () => {
   const dispatchLogin = useAction(authLogin);
@@ -16,7 +16,7 @@ export const Login = () => {
       <Header>Login</Header>
       <Formik
         initialValues={{
-          password: ""
+          password: "",
         }}
         onSubmit={({ password }) => dispatchLogin(password)}
       >
@@ -34,15 +34,15 @@ const LoginForm = () => {
     isSubmitting,
     values,
     setSubmitting,
-    setFieldValue
+    setFieldValue,
   } = useFormikContext<{ password: string }>();
 
-  useDispatchedAction(authError, () => {
+  useObservableActions(error$, () => {
     animation.start({
       x: [-1, 2, -4, 4, -4, 2, -1, 0],
       transition: {
-        duration: 0.4
-      }
+        duration: 0.4,
+      },
     });
     setSubmitting(false);
     setFieldValue("password", "");

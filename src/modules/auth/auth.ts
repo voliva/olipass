@@ -1,73 +1,74 @@
-import {
-  createStandardAction,
-  createStore,
-  filterAction
-} from "@voliva/react-observable";
-import { merge } from "rxjs";
-import { ignoreElements, map, tap } from "rxjs/operators";
+import { bind } from "@react-rxjs/core";
+import { merge, Subject } from "rxjs";
+import { filter, map, withLatestFrom } from "rxjs/operators";
 import { getScreenRoutePath, history, Screen } from "src/router";
 import { DB, loadDB, upsertDB } from "src/services/encryptedDB";
 
 const lsKey = "passDB";
 
-export const authLogin = createStandardAction<string>("auth login");
-export const authSuccess = createStandardAction<{
-  password: string;
-  database: DB;
-}>("auth success");
-export const authError = createStandardAction("auth error");
-export const authCreate = createStandardAction<string>("auth create");
+if (localStorage.getItem(lsKey)) {
+  history.replace(getScreenRoutePath(Screen.Login));
+} else {
+  history.replace(getScreenRoutePath(Screen.Register));
+}
 
-export const [getPassword, authStore] = createStore(
-  null! as string,
-  (state, action) =>
-    authSuccess.isCreatorOf(action) ? action.payload.password : state,
-);
+export const authLogin = new Subject<string>();
+export const authCreate = new Subject<string>();
 
-authStore.addEpic(action$ => {
-  if (localStorage.getItem(lsKey)) {
-    history.replace(getScreenRoutePath(Screen.Login));
-  } else {
-    history.replace(getScreenRoutePath(Screen.Register));
-  }
-
-  const login$ = action$.pipe(
-    filterAction(authLogin),
-    map(action => {
-      const password = action.payload;
+const [, login$] = bind(
+  authLogin.pipe(
+    map((password) => {
       try {
         const database = loadDB(password);
-        return authSuccess({
-          password,
-          database
-        });
+        return {
+          result: "success",
+          database,
+        };
       } catch (ex) {
         console.error(ex);
-        return authError();
+        return {
+          result: "error",
+        };
       }
     })
-  );
+  )
+);
 
-  const create$ = action$.pipe(
-    filterAction(authCreate),
-    map(action => {
-      const password = action.payload;
+const [, create$] = bind(
+  authCreate.pipe(
+    map((password) => {
       const database: DB = {
-        sites: []
+        sites: [],
       };
       upsertDB(database, password);
-      return authSuccess({
-        password,
-        database
-      });
+      return {
+        result: "success",
+        database,
+      };
     })
-  );
+  )
+);
 
-  const success$ = action$.pipe(
-    filterAction(authSuccess),
-    tap(() => history.replace(getScreenRoutePath(Screen.Main))),
-    ignoreElements()
-  );
+const loginPassword$ = login$.pipe(
+  filter(({ result }) => result === "success"),
+  withLatestFrom(authLogin),
+  map(([_, password]) => password)
+);
+const createPassword$ = create$.pipe(
+  filter(({ result }) => result === "success"),
+  withLatestFrom(authCreate),
+  map(([_, password]) => password)
+);
 
-  return merge(login$, create$, success$);
+export const [, password$] = bind(merge(loginPassword$, createPassword$));
+export const [, error$] = bind(
+  login$.pipe(
+    filter(({ result }) => result === "error"),
+    map(() => void 0)
+  )
+);
+
+password$.subscribe(() => {
+  // TODO move this to a `history` module?
+  history.replace(getScreenRoutePath(Screen.Main));
 });

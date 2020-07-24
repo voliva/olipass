@@ -1,9 +1,9 @@
-import { useAction } from "@voliva/react-observable";
 import React from "react";
 import { useInputState } from "src/lib/useInputState";
 import { authCreate } from "./auth";
 import { Panel, Header } from "src/components/Page";
 import { hasDatabase } from "src/services/encryptedDB";
+import { useAction } from "src/lib/storeHelpers";
 
 export const Register = () => {
   const [password, handlePasswordChange] = useInputState("");

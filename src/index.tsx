@@ -1,24 +1,19 @@
+import "cryptojslib/rollups/aes";
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
-import App from "./App";
-import * as serviceWorker from "./serviceWorker";
-import { Provider } from "@voliva/react-observable";
 import { Router } from "react-router";
-import { authStore } from "./modules/auth/auth";
-import { history } from "./router";
-import "cryptojslib/rollups/aes";
+import App from "./App";
+import "./index.css";
 import { Loading } from "./Loading";
-import { siteStore } from "./modules/sites/sites";
+import { history } from "./router";
+import * as serviceWorker from "./serviceWorker";
 
 ReactDOM.render(
-  <Provider stores={[authStore, siteStore]}>
-    <Router history={history}>
-      <Suspense fallback={<Loading />}>
-        <App />
-      </Suspense>
-    </Router>
-  </Provider>,
+  <Router history={history}>
+    <Suspense fallback={<Loading />}>
+      <App />
+    </Suspense>
+  </Router>,
   document.getElementById("root")
 );
 

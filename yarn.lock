@@ -1259,6 +1259,11 @@
     style-value-types "^3.1.7"
     tslib "^1.10.0"
 
+"@react-rxjs/core@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@react-rxjs/core/-/core-0.1.0.tgz#df5c1f8cd2d71dbc6fd1ce93c1af7d7185c0f0f5"
+  integrity sha512-Y8AyF669agP21r69uqIAFeeQBuMtGh+JyDaCZ9ltUV6A+rFN5Iqw/5QPHHSwRk43SlmyzroDj6kgtm66sGswbA==
+
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@sheerun/mutationobserver-shim/-/mutationobserver-shim-0.3.2.tgz#8013f2af54a2b7d735f71560ff360d3a8176a87b"
@@ -1687,12 +1692,6 @@
     lodash.unescape "4.0.1"
     semver "^6.3.0"
     tsutils "^3.17.1"
-
-"@voliva/react-observable@^1.0.0-a5":
-  version "1.0.0-a5"
-  resolved "http://localhost:4873/@voliva%2freact-observable/-/react-observable-1.0.0-a5.tgz"
-  dependencies:
-    rxjs "^6.5.4"
 
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
@@ -9124,6 +9123,11 @@ react-router@5.1.2, react-router@^5.1.2:
     react-is "^16.6.0"
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
+
+react-rxjs@^3.0.0-alpha.5:
+  version "3.0.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/react-rxjs/-/react-rxjs-3.0.0-alpha.5.tgz#8bf499ac41fa2dcc1ab0f67695784a4ac5ca976c"
+  integrity sha512-t0FP3IP1NuwdY8EAhbGzDNe/e8mJXqQR2gIQ0pbcd7GClND2LoR4No6r+zpLcN60vZOsa2gYXNGZd23QklakYQ==
 
 react-scripts@3.3.0:
   version "3.3.0"
