@@ -31,7 +31,7 @@
     "react-scripts": "3.4.1",
     "react-switch": "^5.0.1",
     "rxjs": "^6.5.4",
-    "rxjs-traces": "^0.1.0-alpha.6",
+    "rxjs-traces": "^0.1.0-alpha.7",
     "styled-components": "^5.0.0",
     "typescript": "~3.9.7",
     "uuid": "^3.4.0"

@@ -80,10 +80,10 @@ export const [, password$] = bind(
     addDebugTag("password$") // Lol... opt-in or opt-out if we embed to rxjs
   )
 );
-export const [, database$] = bind(
+export const [, loginDB$] = bind(
   merge(loginResult$, createResult$).pipe(
     map(({ database }) => database),
-    addDebugTag("database$")
+    addDebugTag("loginDB$")
   )
 );
 export const [, error$] = bind(
@@ -94,8 +94,6 @@ export const [, error$] = bind(
   )
 );
 
-export const [,authRedirect] = bind(
-  password$.pipe(
-    tap(() => history.replace(getScreenRoutePath(Screen.Main)))
-  )
-)
+export const [, authRedirect] = bind(
+  password$.pipe(tap(() => history.replace(getScreenRoutePath(Screen.Main))))
+);

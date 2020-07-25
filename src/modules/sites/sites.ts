@@ -1,40 +1,84 @@
 import { bind } from "@react-rxjs/core";
-import { keyBy } from "lodash";
-import { defer, merge, Observable, Subject } from "rxjs";
-import { map, scan, switchMap, startWith } from "rxjs/operators";
-import { Site } from "src/services/encryptedDB";
-import uuid from "uuid/v4";
-import { database$ } from "../auth/auth";
-import * as sync from "../sync/sync";
+import { Dictionary, keyBy } from "lodash";
+import { merge, of, Subject } from "rxjs";
 import { addDebugTag } from "rxjs-traces";
+import {
+  concat,
+  filter,
+  map,
+  share,
+  switchMap,
+  tap,
+  withLatestFrom,
+} from "rxjs/operators";
+import { recursiveObservable } from "src/lib/storeHelpers";
+import { Site, upsertDB } from "src/services/encryptedDB";
+import { mergeDatabase } from "src/services/mergeDB";
+import uuid from "uuid/v4";
+import { loginDB$, password$ } from "../auth/auth";
+import { loadedDB$ } from "../sync/sync";
+
+const [_site$, connectSites] = recursiveObservable<Dictionary<Site>>();
 
 export const upsertSite = new Subject<Site>();
-
-const databaseSite$ = database$.pipe(map((db) => keyBy(db.sites, "id")));
-
-const siteUpdate$: Observable<Site | Site[]> = merge(
-  upsertSite,
-  defer(() => sync.uploadSuccess$).pipe(map((db) => db.sites))
+const upsertedSite$ = upsertSite.pipe(
+  withLatestFrom(_site$),
+  map(([newSite, sites]) => ({
+    ...sites,
+    [newSite.id]: newSite,
+  }))
 );
 
+const mergedSiteResult$ = loadedDB$.pipe(
+  withLatestFrom(_site$),
+  map(([db, sites]) => {
+    try {
+      return mergeDatabase(Object.values(sites), db);
+    } catch (ex) {
+      console.error(ex);
+      return {
+        error: ex,
+      };
+    }
+  }),
+  addDebugTag("mergedSiteResult$"),
+  share()
+);
+
+export const mergedSite$ = mergedSiteResult$.pipe(
+  filter((v) => "sites" in v),
+  map((v) => (v as { sites: Site[] }).sites),
+  map((sites) => keyBy(sites, "id"))
+);
+export const mergeError$ = mergedSiteResult$.pipe(
+  filter((v) => "error" in v),
+  map((v) => (v as { error: Error }).error)
+);
+
+const loginSite$ = loginDB$.pipe(map((db) => keyBy(db.sites, "id")));
 const [, site$] = bind(
-  databaseSite$.pipe(
-    switchMap((site) =>
-      siteUpdate$.pipe(
-        scan(
-          (acc, newSite) =>
-            Array.isArray(newSite)
-              ? keyBy(newSite, "id")
-              : {
-                  ...acc,
-                  [newSite.id]: newSite,
-                },
-          site
-        ),
-        startWith(site)
-      )
-    ),
+  loginSite$.pipe(
+    switchMap((site) => merge(upsertedSite$, mergedSite$, of(site))),
+    connectSites(),
     addDebugTag("site$")
+  )
+);
+
+export const [, allSites$] = bind(
+  site$.pipe(map((sites) => Object.values(sites)))
+);
+
+export const [, databasePersistence] = bind(
+  allSites$.pipe(
+    withLatestFrom(password$),
+    tap(([sites, password]) => {
+      upsertDB(
+        {
+          sites,
+        },
+        password
+      );
+    })
   )
 );
 
@@ -42,13 +86,6 @@ export const [useSiteList, siteList$] = bind(
   site$.pipe(
     map((sites) => Object.values(sites).filter((site) => !site.deletedAt)),
     addDebugTag("siteList$")
-  )
-);
-
-export const [, deletedSite$] = bind(
-  site$.pipe(
-    map((sites) => Object.values(sites).filter((site) => !!site.deletedAt)),
-    addDebugTag("deletedSite$")
   )
 );
 

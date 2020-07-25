@@ -2,7 +2,7 @@ import { Field, FieldProps, Form, Formik, useFormikContext } from "formik";
 import { noop } from "lodash";
 import React, { ChangeEvent, FC } from "react";
 import { Header, Panel } from "src/components/Page";
-import { uploadFile, uploadError$, uploadSuccess$ } from "./sync";
+import { uploadFile, uploadError$, loadedDB$ } from "./sync";
 import { useAnimation, motion } from "framer-motion";
 import { useAction, useObservableEffect } from "src/lib/storeHelpers";
 
@@ -18,7 +18,7 @@ const initialState: FormikState = {
 
 export const Upload: FC<{ onBack?: () => void }> = ({ onBack = noop }) => {
   const dispatchUpload = useAction(uploadFile);
-  useObservableEffect(uploadSuccess$, onBack);
+  useObservableEffect(loadedDB$, onBack);
 
   return (
     <Panel>

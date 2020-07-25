@@ -6,12 +6,9 @@ import { Panel, Popup } from "src/components/Page";
 import styled from "styled-components";
 import { SiteForm } from "./sites/SiteForm";
 import { SiteList } from "./sites/SiteList";
-import {
-  databaseExporter,
-  databasePersistence,
-  exportDatabase,
-} from "./sync/sync";
+import { databaseExporter, exportDatabase } from "./sync/sync";
 import { Upload } from "./sync/Upload";
+import { databasePersistence } from "./sites/sites";
 
 export const Main = () => {
   const [siteId, setSiteId] = useState<string>();
