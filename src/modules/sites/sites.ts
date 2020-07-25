@@ -59,8 +59,8 @@ const loginSite$ = loginDB$.pipe(map((db) => keyBy(db.sites, "id")));
 const [, site$] = bind(
   loginSite$.pipe(
     switchMap((site) => merge(upsertedSite$, mergedSite$, of(site))),
-    connectSites(),
-    addDebugTag("site$")
+    addDebugTag("site$"),
+    connectSites()
   )
 );
 

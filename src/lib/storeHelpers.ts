@@ -8,7 +8,7 @@ import {
   MonoTypeOperatorFunction,
 } from "rxjs";
 import { tap, observeOn, share } from "rxjs/operators";
-import { addDebugTag } from "rxjs-traces";
+import { createLink, addDebugTag } from "rxjs-traces";
 
 export const useAction = <T>(subject: Subject<T>) =>
   useCallback((action: T) => subject.next(action), [subject]);
@@ -44,9 +44,10 @@ export const useObservableEffect = <T>(
 export const recursiveObservable = <T>(
   scheduler: SchedulerLike = asapScheduler
 ): [Observable<T>, () => MonoTypeOperatorFunction<T>] => {
+  const [from, to] = createLink();
   const mirrored$ = new Subject<T>();
   return [
-    mirrored$.pipe(observeOn(scheduler), share()),
-    () => tap(mirrored$) as MonoTypeOperatorFunction<T>,
+    mirrored$.pipe(observeOn(scheduler), to(), share()),
+    () => (source: Observable<T>) => source.pipe(tap(mirrored$), from()) as any,
   ];
 };
