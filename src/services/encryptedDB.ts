@@ -20,6 +20,7 @@ export interface Site {
 }
 export interface DB {
   sites: Site[];
+  version: number;
 }
 
 const getEncryptedDB = () => localStorage.getItem(lsKey);

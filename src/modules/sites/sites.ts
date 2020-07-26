@@ -3,7 +3,6 @@ import { Dictionary, keyBy } from "lodash";
 import { merge, of, Subject } from "rxjs";
 import { addDebugTag } from "rxjs-traces";
 import {
-  concat,
   filter,
   map,
   share,
@@ -26,7 +25,8 @@ const upsertedSite$ = upsertSite.pipe(
   map(([newSite, sites]) => ({
     ...sites,
     [newSite.id]: newSite,
-  }))
+  })),
+  addDebugTag("upsertedSite$")
 );
 
 const mergedSiteResult$ = loadedDB$.pipe(
@@ -75,6 +75,7 @@ export const [, databasePersistence] = bind(
       upsertDB(
         {
           sites,
+          version: 1,
         },
         password
       );

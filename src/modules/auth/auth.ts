@@ -43,6 +43,7 @@ const [, create$] = bind(
     map((password) => {
       const database: DB = {
         sites: [],
+        version: 1,
       };
       upsertDB(database, password);
       return {
@@ -65,13 +66,15 @@ const [, loginResult$] = bind(
     addDebugTag("loginResult$")
   )
 );
-const createResult$ = create$.pipe(
-  filter(({ result }) => result === "success"),
-  withLatestFrom(authCreate),
-  map(([creation, password]) => ({
-    database: creation.database,
-    password,
-  }))
+const [, createResult$] = bind(
+  create$.pipe(
+    filter(({ result }) => result === "success"),
+    withLatestFrom(authCreate),
+    map(([creation, password]) => ({
+      database: creation.database,
+      password,
+    }))
+  )
 );
 
 export const [, password$] = bind(

@@ -14,6 +14,7 @@ import { decryptDatabase, encryptDatabase } from "src/services/encryptedDB";
 import { password$ } from "../auth/auth";
 import { allSites$ } from "../sites/sites";
 import { addDebugTag } from "rxjs-traces";
+import { migrate } from "./migration";
 
 export const exportDatabase = new Subject<void>();
 export const [, databaseExporter] = bind(
@@ -26,6 +27,7 @@ export const [, databaseExporter] = bind(
       const encryptedDb = encryptDatabase(
         {
           sites,
+          version: 1,
         },
         password
       );
@@ -46,7 +48,7 @@ export const uploadFile = new Subject<{
 const loadResult$ = uploadFile.pipe(
   withLatestFrom(password$),
   map(([{ password, file }, oldPassword]) => ({
-    password: password ?? oldPassword,
+    password: password || oldPassword,
     file,
   })),
   switchMap(({ file, password }) =>
@@ -56,7 +58,7 @@ const loadResult$ = uploadFile.pipe(
     try {
       return {
         type: "success" as const,
-        db: decryptDatabase(data, password!),
+        db: migrate(decryptDatabase(data, password!)),
       };
     } catch (ex) {
       console.error(ex);
