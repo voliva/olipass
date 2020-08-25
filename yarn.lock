@@ -3195,10 +3195,10 @@ babel-plugin-named-asset-import@^0.3.6:
   resolved "https://registry.yarnpkg.com/babel-plugin-named-asset-import/-/babel-plugin-named-asset-import-0.3.6.tgz#c9750a1b38d85112c9e166bf3ef7c5dbc605f4be"
   integrity sha512-1aGDUfL1qOOIoqk9QKGIo2lANk+C7ko/fqH0uIyC71x3PEGz0uVP8ISgfEsFuG+FKmjHTvFK/nNM8dowpmUxLA==
 
-babel-plugin-react-rxjs@^0.1.0-alpha.2:
-  version "0.1.0-alpha.2"
-  resolved "https://registry.yarnpkg.com/babel-plugin-react-rxjs/-/babel-plugin-react-rxjs-0.1.0-alpha.2.tgz#9601a45b197ef9340e8a0469f4298ae1f87bf22c"
-  integrity sha512-8XImP7ibsAAtBnWDJL/gzd4ulnmG6VU1AlI8Lo2pJfDf2LxW07egscZWGJst5bFWjAyjETtbiteil9zX9lejtw==
+babel-plugin-react-rxjs@^0.1.0-alpha.2-local1:
+  version "0.1.0-alpha.2-local1"
+  resolved "http://localhost:4873/babel-plugin-react-rxjs/-/babel-plugin-react-rxjs-0.1.0-alpha.2-local1.tgz#5a129bfa9babdde11471ee37d8799e187d0926ba"
+  integrity sha512-VUmD7y6FKYQ4KONCZCu0GK5hxG54dBZvQ8kZC6geNVi4JlwwsXiU6SeFZPphZUkir3Z0A+Y5Pbs0qkfPBT3/Fg==
 
 "babel-plugin-styled-components@>= 1":
   version "1.10.6"
