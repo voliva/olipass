@@ -3195,6 +3195,11 @@ babel-plugin-named-asset-import@^0.3.6:
   resolved "https://registry.yarnpkg.com/babel-plugin-named-asset-import/-/babel-plugin-named-asset-import-0.3.6.tgz#c9750a1b38d85112c9e166bf3ef7c5dbc605f4be"
   integrity sha512-1aGDUfL1qOOIoqk9QKGIo2lANk+C7ko/fqH0uIyC71x3PEGz0uVP8ISgfEsFuG+FKmjHTvFK/nNM8dowpmUxLA==
 
+babel-plugin-react-rxjs@^0.1.0-alpha.2:
+  version "0.1.0-alpha.2"
+  resolved "https://registry.yarnpkg.com/babel-plugin-react-rxjs/-/babel-plugin-react-rxjs-0.1.0-alpha.2.tgz#9601a45b197ef9340e8a0469f4298ae1f87bf22c"
+  integrity sha512-8XImP7ibsAAtBnWDJL/gzd4ulnmG6VU1AlI8Lo2pJfDf2LxW07egscZWGJst5bFWjAyjETtbiteil9zX9lejtw==
+
 "babel-plugin-styled-components@>= 1":
   version "1.10.6"
   resolved "https://registry.yarnpkg.com/babel-plugin-styled-components/-/babel-plugin-styled-components-1.10.6.tgz#f8782953751115faf09a9f92431436912c34006b"
@@ -10809,10 +10814,10 @@ run-queue@^1.0.0, run-queue@^1.0.3:
   dependencies:
     aproba "^1.1.1"
 
-rxjs-traces@^0.1.0-alpha.7:
-  version "0.1.0-alpha.7"
-  resolved "https://registry.yarnpkg.com/rxjs-traces/-/rxjs-traces-0.1.0-alpha.7.tgz#21bd7b1e82b332382b24aa6402fe12c27daf266b"
-  integrity sha512-taYv5Ca5ktaVyQ5TlRxTikaBZJb79IYiBGHgtGQRLqe0XW0CpAF+w1qgmD+z7bidZxZFfW/YrNr3GBX+Rw3KIg==
+rxjs-traces@^0.1.0-alpha.10:
+  version "0.1.0-alpha.10"
+  resolved "https://registry.yarnpkg.com/rxjs-traces/-/rxjs-traces-0.1.0-alpha.10.tgz#7a31bceb465640365d38cdd1cdad05ba322f2d95"
+  integrity sha512-vjITEWpdVnKNRtG1ltmyhMjtFjWuuWoytEifb3PeiB0H3cZNNiJfehosXTB6Hb7qH7bXGqYGO4PX4DB6y3nw6Q==
   dependencies:
     uuid "^8.2.0"
 

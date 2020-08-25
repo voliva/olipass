@@ -1,0 +1,12 @@
+diff --git a/node_modules/react-scripts/config/webpack.config.js b/node_modules/react-scripts/config/webpack.config.js
+index 25840d9..12fc7bd 100644
+--- a/node_modules/react-scripts/config/webpack.config.js
++++ b/node_modules/react-scripts/config/webpack.config.js
+@@ -420,6 +420,7 @@ module.exports = function(webpackEnv) {
+                       },
+                     },
+                   ],
++                  require.resolve('babel-plugin-react-rxjs'),
+                 ],
+                 // This is a feature of `babel-loader` for webpack (not Babel itself).
+                 // It enables caching results in ./node_modules/.cache/babel-loader/

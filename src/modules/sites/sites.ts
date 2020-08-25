@@ -59,7 +59,7 @@ const loginSite$ = loginDB$.pipe(map((db) => keyBy(db.sites, "id")));
 const [, site$] = bind(
   loginSite$.pipe(
     switchMap((site) => merge(upsertedSite$, mergedSite$, of(site))),
-    addDebugTag("site$"),
+    addDebugTag("inner site$"),
     connectSites()
   )
 );
@@ -85,16 +85,12 @@ export const [, databasePersistence] = bind(
 
 export const [useSiteList, siteList$] = bind(
   site$.pipe(
-    map((sites) => Object.values(sites).filter((site) => !site.deletedAt)),
-    addDebugTag("siteList$")
+    map((sites) => Object.values(sites).filter((site) => !site.deletedAt))
   )
 );
 
 export const [useSite] = bind((id: string) =>
-  site$.pipe(
-    map((sites) => sites[id]),
-    addDebugTag("useSite")
-  )
+  site$.pipe(map((sites) => sites[id]))
 );
 
 const localeIncludes = (base: string | undefined, substr: string) =>
@@ -109,8 +105,7 @@ export const [useFilteredSites] = bind((filter: string) =>
           localeIncludes(username, filter) ||
           localeIncludes(notes, filter)
       )
-    ),
-    addDebugTag("useFilteredSites")
+    )
   )
 );
 

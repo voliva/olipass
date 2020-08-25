@@ -8,7 +8,7 @@ import {
   MonoTypeOperatorFunction,
 } from "rxjs";
 import { tap, observeOn, share } from "rxjs/operators";
-import { createLink, addDebugTag } from "rxjs-traces";
+import { createLink } from "rxjs-traces";
 
 export const useAction = <T>(subject: Subject<T>) =>
   useCallback((action: T) => subject.next(action), [subject]);
