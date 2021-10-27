@@ -1,4 +1,4 @@
-import { bind } from "@react-rxjs/core";
+import { bind, shareLatest } from "@react-rxjs/core";
 import { Dictionary, keyBy } from "lodash";
 import { merge, of, Subject } from "rxjs";
 import { addDebugTag } from "rxjs-traces";
@@ -56,12 +56,11 @@ export const mergeError$ = mergedSiteResult$.pipe(
 );
 
 const loginSite$ = loginDB$.pipe(map((db) => keyBy(db.sites, "id")));
-const [, site$] = bind(
-  loginSite$.pipe(
-    switchMap((site) => merge(upsertedSite$, mergedSite$, of(site))),
-    addDebugTag("inner site$"),
-    connectSites()
-  )
+
+const site$ = loginSite$.pipe(
+  switchMap((site) => merge(upsertedSite$, mergedSite$, of(site))),
+  connectSites(),
+  shareLatest()
 );
 
 export const [, allSites$] = bind(
