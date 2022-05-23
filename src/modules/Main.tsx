@@ -1,4 +1,4 @@
-import { Subscribe } from "@react-rxjs/utils";
+import { Subscribe } from "@react-rxjs/core";
 import React, { useState } from "react";
 import { IoMdAdd, IoMdCloudUpload, IoMdDownload } from "react-icons/io";
 import { Portal } from "react-portal";

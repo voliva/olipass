@@ -1,36 +1,32 @@
 import React, { lazy } from "react";
-import { Route, Switch } from "react-router";
+import { Route, Routes } from "react-router";
 import { getScreenRoutePath, Screen } from "./router";
 import { Page } from "./components/Page";
 import { initialize, authRedirect } from "./modules/auth/auth";
-import { Subscribe } from "@react-rxjs/utils";
+import { Subscribe } from "@react-rxjs/core";
 
 initialize();
+
+const Login = lazy(
+  () => import(/* webpackPrefetch: true */ "./modules/auth/Login")
+);
+const Register = lazy(
+  () => import(/* webpackPrefetch: true */ "./modules/auth/Register")
+);
+const Main = lazy(() => import(/* webpackPrefetch: true */ "./modules/Main"));
 
 const App: React.FC = () => {
   return (
     <Page>
       <Subscribe source$={authRedirect} />
-      <Switch>
-        <Route
-          path={getScreenRoutePath(Screen.Login)}
-          component={lazy(() =>
-            import(/* webpackPrefetch: true */ "./modules/auth/Login")
-          )}
-        />
+      <Routes>
+        <Route path={getScreenRoutePath(Screen.Login)} element={<Login />} />
         <Route
           path={getScreenRoutePath(Screen.Register)}
-          component={lazy(() =>
-            import(/* webpackPrefetch: true */ "./modules/auth/Register")
-          )}
+          element={<Register />}
         />
-        <Route
-          path={getScreenRoutePath(Screen.Main)}
-          component={lazy(() =>
-            import(/* webpackPrefetch: true */ "./modules/Main")
-          )}
-        />
-      </Switch>
+        <Route path={getScreenRoutePath(Screen.Main)} element={<Main />} />
+      </Routes>
     </Page>
   );
 };

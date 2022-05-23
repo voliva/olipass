@@ -1,23 +1,38 @@
 import "cryptojslib/rollups/aes";
-import React, { Suspense } from "react";
+import React, { Suspense, useLayoutEffect } from "react";
 import ReactDOM from "react-dom";
 import { Router } from "react-router";
-import { Observable } from "rxjs";
-import { patchObservable } from "rxjs-traces";
 import "./index.css";
 import { Loading } from "./Loading";
 import { history } from "./router";
 import * as serviceWorker from "./serviceWorker";
-import App from './App';
+import App from "./App";
 
-patchObservable(Observable);
+const AppRouter: FCC = ({ children }) => {
+  let [state, setState] = React.useState({
+    action: history.action,
+    location: history.location,
+  });
+
+  useLayoutEffect(() => history.listen(setState), []);
+
+  return (
+    <Router
+      navigator={history}
+      location={state.location}
+      navigationType={state.action}
+    >
+      {children}
+    </Router>
+  );
+};
 
 ReactDOM.render(
-  <Router history={history}>
+  <AppRouter>
     <Suspense fallback={<Loading />}>
       <App />
     </Suspense>
-  </Router>,
+  </AppRouter>,
   document.getElementById("root")
 );
 

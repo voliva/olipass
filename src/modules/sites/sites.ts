@@ -13,7 +13,7 @@ import {
 import { recursiveObservable } from "src/lib/storeHelpers";
 import { Site, upsertDB } from "src/services/encryptedDB";
 import { mergeDatabase } from "src/services/mergeDB";
-import uuid from "uuid/v4";
+import { v4 as uuid } from "uuid";
 import { loginDB$, password$ } from "../auth/auth";
 import { loadedDB$ } from "../sync/sync";
 

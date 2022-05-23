@@ -34,7 +34,7 @@ export const upsertDB = (newDB: DB, password: string) =>
 
 export function encryptDatabase(local: DB, password: string): string {
   const rawStringDB = JSON.stringify(local);
-  const deflatedString = pako.deflate(rawStringDB, { to: "string" });
+  const deflatedString = buf2binstring(pako.deflate(rawStringDB));
   const encryptedDB = CryptoJS.AES.encrypt(
     CryptoJS.enc.Utf8.parse(deflatedString),
     password
@@ -47,6 +47,33 @@ export function decryptDatabase(encryptedDB: string, password: string): DB {
     encryptedDB,
     password
   ).toString(CryptoJS.enc.Utf8);
-  const rawStringDB = pako.inflate(deflatedString, { to: "string" });
+  const rawStringDB = pako.inflate(binstring2buf(deflatedString), {
+    to: "string",
+  });
   return JSON.parse(rawStringDB);
 }
+
+// From https://github.com/nodeca/pako/blob/master/lib/utils/strings.js after they deprecated it
+const buf2binstring = (buf: Uint8Array) => {
+  // On Chrome, the arguments in a function call that are allowed is `65534`.
+  // If the length of the buffer is smaller than that, we can use this optimization,
+  // otherwise we will take a slower path.
+  if (buf.length < 65534) {
+    if ("subarray" in buf) {
+      return String.fromCharCode.apply(null, buf as any);
+    }
+  }
+
+  let result = "";
+  for (let i = 0; i < buf.length; i++) {
+    result += String.fromCharCode(buf[i]);
+  }
+  return result;
+};
+const binstring2buf = function (str: string) {
+  var buf = new Uint8Array(str.length);
+  for (var i = 0, len = buf.length; i < len; i++) {
+    buf[i] = str.charCodeAt(i);
+  }
+  return buf;
+};

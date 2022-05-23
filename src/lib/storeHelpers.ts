@@ -1,5 +1,4 @@
-import { useSubscribe } from "@react-rxjs/utils";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import {
   Observable,
   Subject,
@@ -17,29 +16,27 @@ export const useObservableEffect = <T>(
   observable: Observable<T>,
   handler: (action: T) => void
 ) =>
-  useSubscribe(
-    useMemo(
-      () =>
-        observable.pipe(
-          (stream) =>
-            new Observable<T>((obs) => {
-              let isSync = true;
-              const subscription = stream.subscribe(
-                (next) => {
-                  if (isSync) return;
-                  obs.next(next);
-                },
-                obs.error.bind(obs),
-                obs.complete.bind(obs)
-              );
-              isSync = false;
-              return subscription;
-            }),
-          tap(handler)
-        ),
-      [observable, handler]
-    )
-  );
+  useEffect(() => {
+    const sub = observable
+      .pipe(
+        (stream) =>
+          new Observable<T>((obs) => {
+            let isSync = true;
+            const subscription = stream.subscribe(
+              (next) => {
+                if (isSync) return;
+                obs.next(next);
+              },
+              obs.error.bind(obs),
+              obs.complete.bind(obs)
+            );
+            isSync = false;
+            return subscription;
+          })
+      )
+      .subscribe(handler);
+    return () => sub.unsubscribe();
+  }, [observable, handler]);
 
 export const recursiveObservable = <T>(
   scheduler: SchedulerLike = asapScheduler

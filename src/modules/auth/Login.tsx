@@ -1,7 +1,7 @@
 import { Field, Form, Formik, useFormikContext } from "formik";
 import { motion, useAnimation } from "framer-motion";
 import React, { useRef } from "react";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import { Header, Panel } from "src/components/Page";
 import { getScreenRoutePath, Screen } from "src/router";
 import styled from "styled-components";
@@ -27,15 +27,11 @@ export const Login = () => {
 };
 
 const LoginForm = () => {
-  const history = useHistory();
+  const navigate = useNavigate();
   const animation = useAnimation();
   const passwordRef = useRef<HTMLInputElement>(null);
-  const {
-    isSubmitting,
-    values,
-    setSubmitting,
-    setFieldValue,
-  } = useFormikContext<{ password: string }>();
+  const { isSubmitting, values, setSubmitting, setFieldValue } =
+    useFormikContext<{ password: string }>();
 
   useObservableEffect(error$, () => {
     animation.start({
@@ -52,7 +48,7 @@ const LoginForm = () => {
   });
 
   const reset = async () => {
-    history.push(getScreenRoutePath(Screen.Register));
+    navigate(getScreenRoutePath(Screen.Register));
   };
 
   return (

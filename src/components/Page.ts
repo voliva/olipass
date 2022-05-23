@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { FC, useRef, createElement, MouseEvent } from "react";
+import { useRef, createElement, MouseEvent } from "react";
 import { noop } from "lodash";
 
 const pageBackground = "#f8f8f8";
@@ -44,19 +44,26 @@ const StyledPopup = styled.div`
     }
   }
 `;
-export const Popup: FC<{ onClose?: () => void}> = ({ onClose = noop, children }) => {
+export const Popup: FCC<{ onClose?: () => void }> = ({
+  onClose = noop,
+  children,
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   const handleClick = (evt: MouseEvent) => {
-    if(evt.target === ref.current) {
+    if (evt.target === ref.current) {
       onClose();
     }
-  }
+  };
 
-  return createElement(StyledPopup, {
-    ref,
-    onClick: handleClick
-  }, children);
-}
+  return createElement(
+    StyledPopup,
+    {
+      ref,
+      onClick: handleClick,
+    },
+    children
+  );
+};
 
 export const Header = styled.div`
   background-color: ${headerBackground};
