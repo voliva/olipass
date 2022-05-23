@@ -1,4 +1,4 @@
-import { bind } from "@react-rxjs/core";
+import { state } from "@react-rxjs/core";
 import { merge, Subject } from "rxjs";
 import { filter, map, withLatestFrom, tap } from "rxjs/operators";
 import { getScreenRoutePath, history, Screen } from "src/router";
@@ -17,7 +17,7 @@ export function initialize() {
 export const authLogin = new Subject<string>();
 export const authCreate = new Subject<string>();
 
-const [, login$] = bind(
+const login$ = state(
   authLogin.pipe(
     map((password) => {
       try {
@@ -36,7 +36,7 @@ const [, login$] = bind(
   )
 );
 
-const [, create$] = bind(
+const create$ = state(
   authCreate.pipe(
     map((password) => {
       const database: DB = {
@@ -52,7 +52,7 @@ const [, create$] = bind(
   )
 );
 
-const [, loginResult$] = bind(
+const loginResult$ = state(
   login$.pipe(
     filter(({ result }) => result === "success"),
     withLatestFrom(authLogin),
@@ -62,7 +62,7 @@ const [, loginResult$] = bind(
     }))
   )
 );
-const [, createResult$] = bind(
+const createResult$ = state(
   create$.pipe(
     filter(({ result }) => result === "success"),
     withLatestFrom(authCreate),
@@ -73,19 +73,19 @@ const [, createResult$] = bind(
   )
 );
 
-export const [, password$] = bind(
+export const password$ = state(
   merge(loginResult$, createResult$).pipe(map(({ password }) => password))
 );
-export const [, loginDB$] = bind(
+export const loginDB$ = state(
   merge(loginResult$, createResult$).pipe(map(({ database }) => database))
 );
-export const [, error$] = bind(
+export const error$ = state(
   login$.pipe(
     filter(({ result }) => result === "error"),
     map(() => void 0)
   )
 );
 
-export const [, authRedirect] = bind(
+export const authRedirect = state(
   password$.pipe(tap(() => history.replace(getScreenRoutePath(Screen.Main))))
 );

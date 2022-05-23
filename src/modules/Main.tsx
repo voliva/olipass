@@ -9,6 +9,9 @@ import { SiteList } from "./sites/SiteList";
 import { databaseExporter, exportDatabase } from "./sync/sync";
 import { Upload } from "./sync/Upload";
 import { databasePersistence } from "./sites/sites";
+import { merge } from "rxjs";
+
+const effects = merge(databaseExporter, databasePersistence);
 
 export const Main = () => {
   const [siteId, setSiteId] = useState<string>();
@@ -18,9 +21,9 @@ export const Main = () => {
 
   return (
     <Panel>
-      <Subscribe source$={databaseExporter} />
-      <Subscribe source$={databasePersistence} />
-      <SiteList onSiteClick={setSiteId} />
+      <Subscribe source$={effects}>
+        <SiteList onSiteClick={setSiteId} />
+      </Subscribe>
       <Actions>
         <Action onClick={() => setSiteId("new")}>
           <IoMdAdd />
@@ -35,14 +38,18 @@ export const Main = () => {
       {siteId && (
         <Portal>
           <Popup>
-            <SiteForm siteId={siteId} onBack={() => setSiteId(undefined)} />
+            <Subscribe>
+              <SiteForm siteId={siteId} onBack={() => setSiteId(undefined)} />
+            </Subscribe>
           </Popup>
         </Portal>
       )}
       {showUpload && (
         <Portal>
           <Popup onClose={hideUpload}>
-            <Upload onBack={hideUpload} />
+            <Subscribe>
+              <Upload onBack={hideUpload} />
+            </Subscribe>
           </Popup>
         </Portal>
       )}

@@ -1,4 +1,4 @@
-import { bind } from "@react-rxjs/core";
+import { state } from "@react-rxjs/core";
 import { format } from "date-fns";
 import { saveAs } from "file-saver";
 import { defer, Subject } from "rxjs";
@@ -17,7 +17,7 @@ import { addDebugTag } from "rxjs-traces";
 import { migrate } from "./migration";
 
 export const exportDatabase = new Subject<void>();
-export const [, databaseExporter] = bind(
+export const databaseExporter = state(
   exportDatabase.pipe(
     withLatestFrom(
       password$,

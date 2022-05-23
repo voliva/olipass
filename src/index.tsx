@@ -1,12 +1,12 @@
 import "cryptojslib/rollups/aes";
 import React, { Suspense, useLayoutEffect } from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Router } from "react-router";
+import App from "./App";
 import "./index.css";
 import { Loading } from "./Loading";
 import { history } from "./router";
 import * as serviceWorker from "./serviceWorker";
-import App from "./App";
 
 const AppRouter: FCC = ({ children }) => {
   let [state, setState] = React.useState({
@@ -27,13 +27,13 @@ const AppRouter: FCC = ({ children }) => {
   );
 };
 
-ReactDOM.render(
+const root = createRoot(document.getElementById("root")!);
+root.render(
   <AppRouter>
     <Suspense fallback={<Loading />}>
       <App />
     </Suspense>
-  </AppRouter>,
-  document.getElementById("root")
+  </AppRouter>
 );
 
 // If you want your app to work offline and load faster, you can change

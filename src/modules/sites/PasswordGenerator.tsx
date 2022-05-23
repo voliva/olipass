@@ -23,7 +23,7 @@ export const PasswordGenerator: FC<{
         numbers,
         symbols,
         uppercase,
-        strict: true
+        strict: true,
       }),
     [length, uppercase, numbers, symbols]
   );
