@@ -12,7 +12,7 @@ export interface Site {
   password?: string;
   notes?: string;
   updatedAt: Date;
-  lastVisitAt?: Date;
+  lastVisitAt: Date;
   deletedAt?: Date;
   usernameUpdtAt: Date;
   passwordUpdtAt: Date;
@@ -50,7 +50,23 @@ export function decryptDatabase(encryptedDB: string, password: string): DB {
   const rawStringDB = pako.inflate(binstring2buf(deflatedString), {
     to: "string",
   });
-  return JSON.parse(rawStringDB);
+  const decryptedJSON = JSON.parse(rawStringDB);
+  const dateKeys = [
+    "updatedAt",
+    "lastVisitAt",
+    "deletedAt",
+    "usernameUpdtAt",
+    "passwordUpdtAt",
+    "notesUpdtAt",
+  ];
+  decryptedJSON.sites.forEach((site: any) => {
+    dateKeys.forEach((key) => {
+      if (key in site) {
+        site[key] = new Date(site[key]);
+      }
+    });
+  });
+  return decryptedJSON;
 }
 
 // From https://github.com/nodeca/pako/blob/master/lib/utils/strings.js after they deprecated it

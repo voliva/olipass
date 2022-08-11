@@ -1,6 +1,7 @@
 import { bind, state } from "@react-rxjs/core";
+import { createSignal } from "@react-rxjs/utils";
 import { Dictionary, keyBy } from "lodash";
-import { merge, of, Subject } from "rxjs";
+import { merge, of, Subject, combineLatest } from "rxjs";
 import { addDebugTag } from "rxjs-traces";
 import {
   filter,
@@ -93,11 +94,26 @@ export const [useSite] = bind((id: string) =>
   site$.pipe(map((sites) => sites[id]))
 );
 
+const [filter$, setFilter] = createSignal<string>();
+export { setFilter };
+export const filterState$ = state(filter$, "");
+
 const localeIncludes = (base: string | undefined, substr: string) =>
   base && base.toLowerCase().includes(substr.toLowerCase());
-export const [useFilteredSites] = bind((filter: string) =>
-  siteList$.pipe(
-    map((sites) =>
+export const filteredSites$ = state(
+  combineLatest([
+    siteList$.pipe(
+      tap((states) => console.log(states)),
+      map((sites) =>
+        sites.sort(
+          (s1, s2) =>
+            (s2.lastVisitAt?.getTime() ?? 0) - s1.lastVisitAt?.getTime() ?? 0
+        )
+      )
+    ),
+    filterState$,
+  ]).pipe(
+    map(([sites, filter]) =>
       sites.filter(
         ({ name, website, username, notes }) =>
           localeIncludes(name, filter) ||
@@ -115,4 +131,5 @@ export const createSite = (): Site => ({
   passwordUpdtAt: new Date(),
   updatedAt: new Date(),
   usernameUpdtAt: new Date(),
+  lastVisitAt: new Date(),
 });

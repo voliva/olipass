@@ -10,7 +10,7 @@ export const v0tov1 = (db0: DBv0): DB => ({
     password: site.credentials.secret ? site.credentials.secret : undefined,
     notes: site.notes ? site.notes : undefined,
     updatedAt: new Date(site.updatedAt),
-    lastVisitAt: site.deletedAt ? new Date(site.lastVisitAt) : undefined,
+    lastVisitAt: new Date(site.lastVisitAt),
     deletedAt: site.deletedAt ? new Date(site.deletedAt) : undefined,
     usernameUpdtAt: new Date(site.credentials.updatedAt),
     passwordUpdtAt: new Date(site.credentials.updatedAt),

@@ -1,6 +1,6 @@
 import { Field, FieldAttributes, Form, Formik } from "formik";
 import { noop } from "lodash";
-import React, { FC, MouseEvent, useState } from "react";
+import React, { FC, MouseEvent, useEffect, useState } from "react";
 import { Header, Panel, Popup } from "src/components/Page";
 import { copyText } from "src/lib/copyText";
 import { Site } from "src/services/encryptedDB";
@@ -59,6 +59,13 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
     });
     onBack();
   };
+
+  useEffect(() => {
+    dispatchUpsert({
+      ...site,
+      lastVisitAt: new Date(),
+    });
+  }, []);
 
   return (
     <Panel>

@@ -1,22 +1,22 @@
+import { useStateObservable } from "@react-rxjs/core";
 import { noop } from "lodash";
 import React, { FC } from "react";
 import { Header } from "src/components/Page";
-import { useInputState } from "src/lib/useInputState";
 import styled from "styled-components";
-import { useFilteredSites } from "./sites";
+import { filteredSites$, filterState$, setFilter } from "./sites";
 
 export const SiteList: FC<{ onSiteClick?: (id: string) => void }> = ({
   onSiteClick = noop,
 }) => {
-  const [filter, handleFilterChange] = useInputState();
-  const sites = useFilteredSites(filter);
+  const filter = useStateObservable(filterState$);
+  const sites = useStateObservable(filteredSites$);
 
   return (
     <>
       <Header>Sites</Header>
       <input
         value={filter}
-        onChange={handleFilterChange}
+        onChange={(e) => setFilter(e.target.value)}
         placeholder="Search..."
       />
       <CappedList>
