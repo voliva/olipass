@@ -103,7 +103,6 @@ const localeIncludes = (base: string | undefined, substr: string) =>
 export const filteredSites$ = state(
   combineLatest([
     siteList$.pipe(
-      tap((states) => console.log(states)),
       map((sites) =>
         sites.sort(
           (s1, s2) =>

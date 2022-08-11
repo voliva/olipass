@@ -61,7 +61,7 @@ export function decryptDatabase(encryptedDB: string, password: string): DB {
   ];
   decryptedJSON.sites.forEach((site: any) => {
     dateKeys.forEach((key) => {
-      if (key in site) {
+      if (site[key]) {
         site[key] = new Date(site[key]);
       }
     });
