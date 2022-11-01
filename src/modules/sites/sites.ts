@@ -91,7 +91,7 @@ export const [useSiteList, siteList$] = bind(
 );
 
 export const [useSite] = bind((id: string) =>
-  site$.pipe(map((sites) => sites[id]))
+  site$.pipe(map((sites) => sites[id] as Site | undefined))
 );
 
 const [filter$, setFilter] = createSignal<string>();

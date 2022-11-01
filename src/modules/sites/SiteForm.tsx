@@ -61,10 +61,13 @@ export const SiteForm: FC<{ siteId?: string; onBack?: () => void }> = ({
   };
 
   useEffect(() => {
-    dispatchUpsert({
-      ...site,
-      lastVisitAt: new Date(),
-    });
+    if (site) {
+      dispatchUpsert({
+        ...site,
+        lastVisitAt: new Date(),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

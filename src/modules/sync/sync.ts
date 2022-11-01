@@ -27,7 +27,7 @@ export const databaseExporter = state(
       const encryptedDb = encryptDatabase(
         {
           sites,
-          version: 1,
+          version: 2,
         },
         password
       );
